@@ -1,0 +1,62 @@
+PARSE_PROMOTION_PROMPT = """
+Quyidagi Telegram post matnini tahlil qilib, JSON formatida ma'lumot qaytar.
+
+MATN:
+{text}
+
+DO'KON: {store_name}
+BUGUNGI SANA: {today}
+
+Quyidagi JSON strukturada javob ber:
+
+{{
+    "title": "Mahsulot nomi (qisqa, 50 belgigacha)",
+    "description": "Qo'shimcha tavsif (100 belgigacha)",
+    "old_price": 0,
+    "new_price": 0,
+    "discount_percent": 0,
+    "discount_text": "",
+    "category": "",
+    "deadline": "",
+    "deadline_text": "",
+    "is_active": true,
+    "confidence": 0.9
+}}
+
+QOIDALAR:
+1. Narxlarni so'mda yoz (million emas): 18500000, 5550000
+2. Agar narx "mln" yoki "million" bo'lsa, 1000000 ga ko'paytir
+3. deadline ni ISO formatda yoz: "2026-02-28"
+4. Agar muddat o'tgan bo'lsa, is_active = false
+5. Agar ma'lumot aniq bo'lmasa, null qo'y
+6. Faqat JSON qaytar, boshqa matn yo'q
+"""
+
+GENERATE_CAPTION_PROMPT = """
+Quyidagi aksiya ma'lumotlari asosida Telegram post matni yoz:
+
+Mahsulot: {title}
+Do'kon: {store}
+Eski narx: {old_price} so'm
+Yangi narx: {new_price} so'm
+Chegirma: {discount}
+Muddat: {deadline}
+
+Quyidagi formatda yoz:
+
+🔥 [DO'KON] AKSIYASI
+
+📱 [Mahsulot nomi]
+💰 [eski narx] → [yangi narx] so'm
+📉 Chegirma: [X]%
+⏰ Muddat: [muddat]
+
+🛒 Xarid: [link]
+
+━━━━━━━━━━━━━━━━━━━━━
+
+✅ Kanalga obuna bo'ling: @mirbazar_uz
+🤖 Bot: @mirbazar_bot
+
+#aksiya #chegirma #{store_tag}
+"""

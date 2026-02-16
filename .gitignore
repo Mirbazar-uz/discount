@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Generated
+generated_images/
+*.log
+
+# Node.js
+node_modules/
+.nuxt/
+.output/
+dist/
+.nitro/
+.cache/
+
+# Coverage
+htmlcov/
+.coverage
+coverage/
+
+# Misc
+*.bak
+*.tmp
