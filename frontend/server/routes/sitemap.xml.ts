@@ -69,6 +69,16 @@ export default defineEventHandler(async (event) => {
     priority: '1.0',
   })
 
+  const STATIC_PAGES = ['about', 'contact', 'privacy', 'terms']
+  for (const page of STATIC_PAGES) {
+    urls.push({
+      loc: `${SITE_URL}/${page}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.3',
+    })
+  }
+
   for (const category of CATEGORIES) {
     urls.push({
       loc: `${SITE_URL}/category/${category}`,

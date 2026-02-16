@@ -65,14 +65,14 @@
           </ul>
         </div>
 
-        <!-- Bog'lanish -->
+        <!-- Ma'lumot -->
         <div>
-          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Bog'lanish</h4>
+          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Ma'lumot</h4>
           <ul class="list-none space-y-3">
-            <li><a href="https://t.me/mirbazar_uz" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Telegram kanal</a></li>
-            <li><a href="https://t.me/mirbazar_bot" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Telegram bot</a></li>
-            <li><a href="https://instagram.com/mirbazar.uz" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Instagram</a></li>
-            <li><a href="mailto:info@mirbazar.uz" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">info@mirbazar.uz</a></li>
+            <li><NuxtLink to="/about" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Biz haqimizda</NuxtLink></li>
+            <li><NuxtLink to="/contact" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Bog'lanish</NuxtLink></li>
+            <li><NuxtLink to="/privacy" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Maxfiylik siyosati</NuxtLink></li>
+            <li><NuxtLink to="/terms" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Foydalanish shartlari</NuxtLink></li>
           </ul>
         </div>
       </div>
@@ -80,7 +80,11 @@
       <!-- Bottom -->
       <div class="pt-8 border-t border-white/[0.05] flex flex-col md:flex-row justify-between items-center gap-4">
         <p class="text-gray-600 text-xs">&copy; 2026 Mirbazar.uz — Barcha huquqlar himoyalangan</p>
-        <p class="text-gray-600 text-xs">O'zbekistondagi eng yaxshi chegirmalar aggregatori</p>
+        <div class="flex items-center gap-3 text-gray-600 text-xs">
+          <NuxtLink to="/privacy" class="hover:text-gray-400 transition-colors">Maxfiylik</NuxtLink>
+          <span>|</span>
+          <NuxtLink to="/terms" class="hover:text-gray-400 transition-colors">Shartlar</NuxtLink>
+        </div>
       </div>
     </div>
   </footer>
