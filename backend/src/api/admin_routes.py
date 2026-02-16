@@ -93,6 +93,14 @@ async def admin_login(body: LoginRequest):
     return TokenResponse(access_token=token)
 
 
+@admin_router.post("/refresh", response_model=TokenResponse)
+async def refresh_token(
+    admin: dict = Depends(get_current_admin),
+):
+    token = create_token({"sub": "admin", "role": "admin"})
+    return TokenResponse(access_token=token)
+
+
 @admin_router.get("/dashboard/stats", response_model=DashboardResponse)
 async def dashboard_stats(
     admin: dict = Depends(get_current_admin),

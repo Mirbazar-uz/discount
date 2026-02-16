@@ -85,13 +85,47 @@ interface PostLogList {
   limit: number
 }
 
+function decodeTokenExpiry(token: string): number | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.exp || null
+  } catch {
+    return null
+  }
+}
+
 export function useAdmin() {
   const config = useRuntimeConfig()
-  const { getToken } = useAuth()
+  const { getToken, token: tokenCookie } = useAuth()
 
   const baseURL = import.meta.server
     ? (config.apiBaseServer as string)
     : (config.public.apiBase as string)
+
+  async function refreshTokenIfNeeded() {
+    if (import.meta.server) return
+
+    const currentToken = getToken()
+    if (!currentToken) return
+
+    const exp = decodeTokenExpiry(currentToken)
+    if (!exp) return
+
+    const now = Math.floor(Date.now() / 1000)
+    const hoursLeft = (exp - now) / 3600
+
+    if (hoursLeft > 2) return
+
+    try {
+      const response = await $fetch<{ access_token: string }>(`${baseURL}/admin/refresh`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${currentToken}` },
+      })
+      tokenCookie.value = response.access_token
+    } catch {
+      // Token expired or invalid — will be handled by 401 in fetchAdminApi
+    }
+  }
 
   async function fetchAdminApi<T>(
     endpoint: string,
@@ -101,6 +135,8 @@ export function useAdmin() {
       params?: Record<string, string>
     } = {},
   ): Promise<T> {
+    await refreshTokenIfNeeded()
+
     const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
     let url = `${baseURL}${path}`
 
