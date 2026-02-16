@@ -37,6 +37,8 @@ logger = logging.getLogger(__name__)
 
 admin_router = APIRouter(prefix="/admin", tags=["admin"])
 
+_running_jobs: set = set()
+
 
 def _build_promo_response(p) -> AdminPromotionResponse:
     return AdminPromotionResponse(
@@ -269,7 +271,20 @@ async def trigger_job(
     if not job_func:
         raise HTTPException(status_code=404, detail="Job topilmadi")
 
-    asyncio.create_task(job_func())
+    if job_id in _running_jobs:
+        raise HTTPException(
+            status_code=409, detail=f"'{job_id}' allaqachon ishlamoqda"
+        )
+
+    _running_jobs.add(job_id)
+
+    async def _run_and_cleanup():
+        try:
+            await job_func()
+        finally:
+            _running_jobs.discard(job_id)
+
+    asyncio.create_task(_run_and_cleanup())
     logger.info("Admin triggered job: %s", job_id)
 
     return TriggerResponse(

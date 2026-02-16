@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from datetime import datetime
 
@@ -66,6 +66,14 @@ class PromotionUpdateRequest(BaseModel):
 
 class StatusUpdateRequest(BaseModel):
     status: str
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: str) -> str:
+        allowed = ["active", "expired", "deleted"]
+        if v not in allowed:
+            raise ValueError(f"Status must be one of {allowed}")
+        return v
 
 
 class AdminStoreResponse(BaseModel):

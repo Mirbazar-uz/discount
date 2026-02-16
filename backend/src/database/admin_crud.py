@@ -34,7 +34,8 @@ class AdminPromotionCRUD:
             query = query.filter(Store.slug == store_slug)
 
         if search:
-            query = query.filter(Promotion.title.ilike(f"%{search}%"))
+            sanitized = search.replace("%", "\\%").replace("_", "\\_")
+            query = query.filter(Promotion.title.ilike(f"%{sanitized}%"))
 
         total = query.count()
         promotions = (
