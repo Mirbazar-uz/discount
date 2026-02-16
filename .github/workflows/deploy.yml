@@ -17,6 +17,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
+          command_timeout: 20m
           script: |
             cd /var/www/mirbazar_uz_usr/data/www/mirbazar.uz
 
