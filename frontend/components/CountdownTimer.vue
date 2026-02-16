@@ -14,7 +14,7 @@ const isUrgent = computed(() => props.daysLeft <= 2)
 
 <template>
   <span
-    class="inline-flex items-center gap-1"
+    class="inline-flex items-center gap-1 font-medium"
     :class="isUrgent ? 'text-red-400' : 'text-orange-400'"
   >
     <span v-if="isUrgent" style="animation: blink 1s ease-in-out infinite">

@@ -1,7 +1,8 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone as tz
+from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -204,7 +205,7 @@ class MirbazarApp:
         db = self._get_db_session()
         try:
             promo_crud = PromotionCRUD(db)
-            threshold = datetime.utcnow() - timedelta(days=30)
+            threshold = datetime.now(ZoneInfo("Asia/Tashkent")) - timedelta(days=30)
             promo_crud.delete_old_expired(threshold)
             promo_crud.mark_expired()
         finally:

@@ -7,6 +7,8 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
+const focused = ref(false)
+
 function onInput(event: Event) {
   const target = event.target as HTMLInputElement
   emit('update:modelValue', target.value)
@@ -14,11 +16,15 @@ function onInput(event: Event) {
 </script>
 
 <template>
-  <div class="relative flex-1 min-w-[250px]">
+  <div
+    class="relative flex-1 min-w-[250px] transition-all duration-300"
+    :class="focused ? 'scale-[1.01]' : ''"
+  >
     <svg
-      class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
-      width="20"
-      height="20"
+      class="absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300"
+      :class="focused ? 'text-purple-400' : 'text-gray-500'"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -31,8 +37,10 @@ function onInput(event: Event) {
       type="text"
       :value="modelValue"
       placeholder="Mahsulot qidirish..."
-      class="w-full py-3 pl-12 pr-5 rounded-full bg-white/5 border border-white/10 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:border-purple-500 focus:shadow-[0_0_30px_rgba(124,58,237,0.3)]"
+      class="w-full py-3 pl-11 pr-5 rounded-full bg-white/[0.03] border border-white/10 text-white text-sm placeholder-gray-500 outline-none transition-all duration-300 focus:border-purple-500/60 focus:shadow-[0_0_25px_rgba(124,58,237,0.2)] focus:bg-white/[0.05]"
       @input="onInput"
+      @focus="focused = true"
+      @blur="focused = false"
     />
   </div>
 </template>

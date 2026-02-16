@@ -2,8 +2,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from typing import Dict, Optional, List
+from zoneinfo import ZoneInfo
 
 from .models import Promotion, Store, StoreStats, PostLog, PromotionStatus
+
+UZB_TZ = ZoneInfo("Asia/Tashkent")
 
 
 class StoreCRUD:
@@ -124,7 +127,7 @@ class PromotionCRUD:
         self.db.commit()
 
     def count_today_instagram_posts(self) -> int:
-        today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = datetime.now(UZB_TZ).replace(hour=0, minute=0, second=0, microsecond=0)
         return (
             self.db.query(Promotion)
             .filter(
@@ -171,7 +174,7 @@ class PromotionCRUD:
         return self.db.query(Promotion).filter(Promotion.id == promo_id).first()
 
     def mark_expired(self):
-        now = datetime.utcnow()
+        now = datetime.now(UZB_TZ)
         self.db.query(Promotion).filter(
             Promotion.status == PromotionStatus.ACTIVE,
             Promotion.deadline != None,

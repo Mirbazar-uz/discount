@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Query, Depends
 from typing import Optional, List
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+
+UZB_TZ = ZoneInfo("Asia/Tashkent")
 
 from ..database.connection import get_db
 from ..database.models import Promotion, Store, PromotionStatus
@@ -23,7 +26,7 @@ router = APIRouter()
 
 @router.get("/health", response_model=HealthResponse)
 async def health_check():
-    return HealthResponse(status="ok", timestamp=datetime.utcnow())
+    return HealthResponse(status="ok", timestamp=datetime.now(UZB_TZ))
 
 
 @router.get("/promotions", response_model=PromotionListResponse)
@@ -47,7 +50,7 @@ async def get_promotions(
         offset=offset,
     )
 
-    now = datetime.utcnow()
+    now = datetime.now(UZB_TZ)
     items = []
     for p in promotions:
         days_left = None
@@ -92,7 +95,7 @@ async def get_promotion(promo_id: int, db: Session = Depends(get_db)):
 
         raise HTTPException(status_code=404, detail="Promotion not found")
 
-    now = datetime.utcnow()
+    now = datetime.now(UZB_TZ)
     days_left = None
     if p.deadline:
         days_left = max(0, (p.deadline - now).days)

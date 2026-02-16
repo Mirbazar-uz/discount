@@ -1,6 +1,8 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
 
+TIMEZONE = "Asia/Tashkent"
+
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://mirbazar:password@db:5432/mirbazar"

@@ -2,8 +2,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from typing import List, Dict
+from zoneinfo import ZoneInfo
 
 from ..database.models import Promotion, Store, StoreStats, PromotionStatus
+
+UZB_TZ = ZoneInfo("Asia/Tashkent")
 
 
 class RatingCalculator:
@@ -11,7 +14,7 @@ class RatingCalculator:
         self.db = db
 
     def calculate_weekly_rating(self) -> List[Dict]:
-        week_ago = datetime.utcnow() - timedelta(days=7)
+        week_ago = datetime.now(UZB_TZ) - timedelta(days=7)
 
         stats = (
             self.db.query(
@@ -47,7 +50,7 @@ class RatingCalculator:
         ]
 
     def calculate_monthly_rating(self) -> List[Dict]:
-        month_ago = datetime.utcnow() - timedelta(days=30)
+        month_ago = datetime.now(UZB_TZ) - timedelta(days=30)
 
         stats = (
             self.db.query(
@@ -104,7 +107,7 @@ class RatingCalculator:
 
     def save_weekly_stats(self):
         stats = self.calculate_weekly_rating()
-        now = datetime.utcnow()
+        now = datetime.now(UZB_TZ)
         week_start = now - timedelta(days=7)
 
         for s in stats:

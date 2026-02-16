@@ -16,24 +16,24 @@ defineProps<{
 <template>
   <NuxtLink
     :to="`/store/${store.slug}`"
-    class="glass-card glow-hover p-6 flex items-center gap-4 no-underline group"
+    class="glass-card-hover p-5 flex items-center gap-4 group"
   >
     <div
-      class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold text-white"
-      :style="{ background: store.color || '#7c3aed' }"
+      class="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white shrink-0 transition-transform duration-300 group-hover:scale-110"
+      :style="{ background: store.color || 'linear-gradient(135deg, #7c3aed, #00d4ff)' }"
     >
       {{ store.name.charAt(0) }}
     </div>
-    <div class="flex-1">
-      <h3 class="text-white font-semibold text-lg group-hover:text-purple-400 transition-colors">
+    <div class="flex-1 min-w-0">
+      <h3 class="text-white font-semibold text-base group-hover:text-purple-400 transition-colors truncate">
         {{ store.name }}
       </h3>
-      <p class="text-gray-400 text-sm">
+      <p class="text-gray-500 text-xs mt-0.5">
         {{ store.promotion_count }} ta aksiya
       </p>
     </div>
-    <span class="text-gray-500 group-hover:text-purple-400 transition-colors">
-      &rarr;
-    </span>
+    <svg class="text-gray-600 group-hover:text-purple-400 transition-all duration-300 group-hover:translate-x-1 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M9 18l6-6-6-6"/>
+    </svg>
   </NuxtLink>
 </template>

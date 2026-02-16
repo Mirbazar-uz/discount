@@ -1,16 +1,23 @@
 <script setup lang="ts">
 const { getPromotions, getWeeklyRating, getStats } = usePromotion()
+const { fetchApi } = useApi()
 
 const selectedCategory = ref('all')
 const searchQuery = ref('')
 const promotions = ref<any[]>([])
 const totalPromotions = ref(0)
 const rating = ref<any[]>([])
+const stores = ref<any[]>([])
 const stats = ref({ total_promotions: 0, active_promotions: 0, total_stores: 0, max_discount: 0 })
+
+const loading = ref(true)
+const loadingRating = ref(true)
+const loadingStores = ref(true)
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 async function loadPromotions() {
+  loading.value = true
   try {
     const params: Record<string, string> = {}
     if (selectedCategory.value !== 'all') {
@@ -24,15 +31,31 @@ async function loadPromotions() {
     totalPromotions.value = data.total
   } catch {
     promotions.value = []
+  } finally {
+    loading.value = false
   }
 }
 
 async function loadRating() {
+  loadingRating.value = true
   try {
     const data = await getWeeklyRating()
     rating.value = data.stores
   } catch {
     rating.value = []
+  } finally {
+    loadingRating.value = false
+  }
+}
+
+async function loadStores() {
+  loadingStores.value = true
+  try {
+    stores.value = await fetchApi<any[]>('/stores')
+  } catch {
+    stores.value = []
+  } finally {
+    loadingStores.value = false
   }
 }
 
@@ -59,6 +82,7 @@ onMounted(() => {
   loadPromotions()
   loadRating()
   loadStats()
+  loadStores()
 })
 
 useHead({
@@ -75,13 +99,32 @@ useHead({
     />
 
     <!-- Rating Section -->
-    <section id="rating" class="py-20 bg-gradient-to-br from-purple-500/5 to-cyan-500/5">
-      <div class="max-w-7xl mx-auto px-5">
-        <div class="flex justify-between items-center mb-10">
-          <h2 class="text-3xl font-bold text-white">Haftalik reyting</h2>
-          <span class="text-gray-400">Eng ko'p chegirma bergan do'konlar</span>
+    <section id="rating" class="py-20 relative">
+      <div class="absolute inset-0 bg-gradient-to-b from-purple-500/[0.03] to-transparent pointer-events-none"></div>
+      <div class="max-w-7xl mx-auto px-5 relative">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+          <div>
+            <h2 class="section-title">Haftalik reyting</h2>
+            <p class="text-gray-500 text-sm mt-2">Eng ko'p chegirma bergan do'konlar</p>
+          </div>
+          <div class="badge-live">
+            <span class="w-2 h-2 bg-green-400 rounded-full" style="animation: blink 1.5s ease-in-out infinite"></span>
+            Yangilanmoqda
+          </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <!-- Rating skeleton -->
+        <div v-if="loadingRating" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div v-for="i in 4" :key="i" class="glass-card p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl skeleton"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 w-24 skeleton rounded"></div>
+              <div class="h-3 w-16 skeleton rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="rating.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <RatingBadge
             v-for="(store, index) in rating"
             :key="store.slug"
@@ -89,13 +132,18 @@ useHead({
             :position="index"
           />
         </div>
+
+        <div v-else class="glass-card p-10 text-center">
+          <p class="text-gray-500">Hali reyting ma'lumotlari yo'q</p>
+        </div>
       </div>
     </section>
 
-    <!-- Filters + Promotions -->
+    <!-- Filters -->
     <section
       id="promotions"
-      class="py-10 sticky top-[70px] z-40 bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-white/10"
+      class="py-6 sticky top-[56px] z-40 border-b border-white/[0.06] transition-all duration-300"
+      style="background: rgba(10, 10, 15, 0.92); backdrop-filter: blur(20px) saturate(180%)"
     >
       <div class="max-w-7xl mx-auto px-5 flex flex-col md:flex-row gap-4 items-start md:items-center">
         <CategoryFilter v-model="selectedCategory" />
@@ -103,25 +151,24 @@ useHead({
       </div>
     </section>
 
+    <!-- Promotions Grid -->
     <section class="py-16">
       <div class="max-w-7xl mx-auto px-5">
-        <div class="flex justify-between items-center mb-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div class="flex items-center gap-4">
-            <h2 class="text-3xl font-bold text-white">Joriy aksiyalar</h2>
-            <div
-              class="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500 rounded-full text-sm text-green-400"
-            >
-              <span
-                class="w-2 h-2 bg-green-400 rounded-full"
-                style="animation: blink 1s ease-in-out infinite"
-              ></span>
-              Yangilanmoqda
-            </div>
+            <h2 class="section-title">Joriy aksiyalar</h2>
+            <span class="text-gray-500 text-sm">{{ totalPromotions }} ta</span>
           </div>
         </div>
 
+        <!-- Loading skeleton -->
+        <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <PromotionSkeleton v-for="i in 6" :key="i" />
+        </div>
+
+        <!-- Promotions -->
         <div
-          v-if="promotions.length"
+          v-else-if="promotions.length"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <PromotionCard
@@ -130,9 +177,50 @@ useHead({
             :promotion="promo"
           />
         </div>
-        <div v-else class="text-center py-20 text-gray-500">
-          <p class="text-xl mb-2">Aksiyalar topilmadi</p>
-          <p class="text-sm">Boshqa kategoriyani tanlang yoki qidiruv so'zini o'zgartiring</p>
+
+        <!-- Empty state -->
+        <div v-else class="glass-card p-16 text-center">
+          <svg class="mx-auto mb-4 text-gray-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <p class="text-lg text-gray-400 mb-2">Aksiyalar topilmadi</p>
+          <p class="text-sm text-gray-600">Boshqa kategoriyani tanlang yoki qidiruv so'zini o'zgartiring</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stores Section -->
+    <section id="stores" class="py-16 relative">
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/[0.02] to-transparent pointer-events-none"></div>
+      <div class="max-w-7xl mx-auto px-5 relative">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+          <div>
+            <h2 class="section-title">Do'konlar</h2>
+            <p class="text-gray-500 text-sm mt-2">Barcha do'konlar va ularning aksiyalari</p>
+          </div>
+        </div>
+
+        <!-- Stores skeleton -->
+        <div v-if="loadingStores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-for="i in 6" :key="i" class="glass-card p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl skeleton"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 w-28 skeleton rounded"></div>
+              <div class="h-3 w-16 skeleton rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="stores.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <StoreCard
+            v-for="store in stores"
+            :key="store.id"
+            :store="store"
+          />
+        </div>
+
+        <div v-else class="glass-card p-10 text-center">
+          <p class="text-gray-500">Hali do'konlar ma'lumotlari yo'q</p>
         </div>
       </div>
     </section>

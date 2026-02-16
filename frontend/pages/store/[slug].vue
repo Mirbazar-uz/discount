@@ -3,13 +3,14 @@ const route = useRoute()
 const slug = route.params.slug as string
 
 const { getPromotions } = usePromotion()
-const { fetchApi } = useApi()
 
 const promotions = ref<any[]>([])
 const total = ref(0)
 const storeName = ref(slug)
+const loading = ref(true)
 
 async function loadData() {
+  loading.value = true
   try {
     const data = await getPromotions({ stores: slug })
     promotions.value = data.promotions
@@ -20,6 +21,8 @@ async function loadData() {
     }
   } catch {
     promotions.value = []
+  } finally {
+    loading.value = false
   }
 }
 
@@ -33,18 +36,39 @@ useHead({
 <template>
   <div class="pt-24 pb-16">
     <div class="max-w-7xl mx-auto px-5">
+      <!-- Header -->
       <div class="mb-10">
-        <NuxtLink to="/" class="text-purple-400 hover:text-cyan-400 text-sm no-underline">
-          &larr; Bosh sahifa
+        <NuxtLink
+          to="/"
+          class="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 text-sm transition-colors mb-6 group"
+        >
+          <svg class="transition-transform group-hover:-translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          Bosh sahifa
         </NuxtLink>
-        <h1 class="text-4xl font-bold text-white mt-4">
-          {{ storeName }}
-        </h1>
-        <p class="text-gray-400 mt-2">{{ total }} ta aksiya topildi</p>
+
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+            {{ storeName.charAt(0) }}
+          </div>
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold text-white">
+              {{ storeName }}
+            </h1>
+            <p class="text-gray-500 mt-1">{{ total }} ta aksiya topildi</p>
+          </div>
+        </div>
       </div>
 
+      <!-- Loading skeleton -->
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <PromotionSkeleton v-for="i in 6" :key="i" />
+      </div>
+
+      <!-- Promotions -->
       <div
-        v-if="promotions.length"
+        v-else-if="promotions.length"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <PromotionCard
@@ -53,8 +77,16 @@ useHead({
           :promotion="promo"
         />
       </div>
-      <div v-else class="text-center py-20 text-gray-500">
-        <p class="text-xl">Bu do'konda aksiyalar topilmadi</p>
+
+      <!-- Empty -->
+      <div v-else class="glass-card p-16 text-center">
+        <svg class="mx-auto mb-4 text-gray-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
+        <p class="text-lg text-gray-400 mb-2">Bu do'konda aksiyalar topilmadi</p>
+        <NuxtLink to="/" class="text-purple-400 hover:text-cyan-400 text-sm transition-colors">
+          Bosh sahifaga qaytish
+        </NuxtLink>
       </div>
     </div>
   </div>
