@@ -31,7 +31,7 @@
               </svg>
             </a>
             <a
-              href="https://instagram.com/mirbazar.uz"
+              href="https://instagram.com/mirbazaruz"
               target="_blank"
               class="w-10 h-10 flex items-center justify-center bg-white/[0.03] border border-white/10 rounded-xl text-gray-500 hover:text-white hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500 hover:border-transparent hover:-translate-y-1 transition-all duration-300"
             >

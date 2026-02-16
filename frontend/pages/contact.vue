@@ -62,7 +62,7 @@ useHead({
 
           <!-- Instagram -->
           <a
-            href="https://instagram.com/mirbazar.uz"
+            href="https://instagram.com/mirbazaruz"
             target="_blank"
             rel="noopener"
             class="glass-card p-8 group hover:border-pink-500/30 transition-all duration-300"
@@ -76,7 +76,7 @@ useHead({
             <p class="text-gray-400 text-sm mb-4 leading-relaxed">
               Chegirmalar rasmiy sahifasi. Chiroyli postlar va stories.
             </p>
-            <span class="text-pink-400 text-sm font-medium">@mirbazar.uz</span>
+            <span class="text-pink-400 text-sm font-medium">@mirbazaruz</span>
           </a>
 
           <!-- Email -->
