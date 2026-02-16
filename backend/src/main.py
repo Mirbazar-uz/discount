@@ -20,6 +20,7 @@ from .poster.instagram_poster import InstagramPoster
 from .rating.calculator import RatingCalculator
 from .scheduler.jobs import MirbazarScheduler
 from .api.routes import router
+from .api.admin_routes import admin_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -248,3 +249,4 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(admin_router)

@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     INSTAGRAM_USERNAME: str = ""
     INSTAGRAM_PASSWORD: str = ""
 
+    ADMIN_PASSWORD: str = "changeme"
+    JWT_SECRET: str = "changeme-jwt-secret"
+    JWT_EXPIRE_HOURS: int = 24
+
     SCRAPE_INTERVAL_HOURS: int = 4
     POST_DELAY_SECONDS: int = 60
     MAX_POSTS_PER_DAY: int = 20
