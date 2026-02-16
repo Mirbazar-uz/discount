@@ -8,8 +8,14 @@ const props = defineProps<{
 const animatedPromos = ref(0)
 const animatedStores = ref(0)
 const animatedDiscount = ref(0)
+const mounted = ref(false)
 
 function animateCount(target: number, current: Ref<number>, duration: number = 1500) {
+  if (!import.meta.client) {
+    current.value = target
+    return
+  }
+
   const start = 0
   const startTime = Date.now()
 
@@ -27,17 +33,27 @@ function animateCount(target: number, current: Ref<number>, duration: number = 1
   requestAnimationFrame(update)
 }
 
+onMounted(() => {
+  mounted.value = true
+  if (props.totalPromotions > 0) animateCount(props.totalPromotions, animatedPromos)
+  if (props.totalStores > 0) animateCount(props.totalStores, animatedStores)
+  if (props.maxDiscount > 0) animateCount(props.maxDiscount, animatedDiscount)
+})
+
 watch(() => props.totalPromotions, (val) => {
-  if (val > 0) animateCount(val, animatedPromos)
-}, { immediate: true })
+  if (val > 0 && mounted.value) animateCount(val, animatedPromos)
+  else animatedPromos.value = val
+})
 
 watch(() => props.totalStores, (val) => {
-  if (val > 0) animateCount(val, animatedStores)
-}, { immediate: true })
+  if (val > 0 && mounted.value) animateCount(val, animatedStores)
+  else animatedStores.value = val
+})
 
 watch(() => props.maxDiscount, (val) => {
-  if (val > 0) animateCount(val, animatedDiscount)
-}, { immediate: true })
+  if (val > 0 && mounted.value) animateCount(val, animatedDiscount)
+  else animatedDiscount.value = val
+})
 </script>
 
 <template>
