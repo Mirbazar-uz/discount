@@ -55,7 +55,8 @@ async def get_promotions(
     for p in promotions:
         days_left = None
         if p.deadline:
-            days_left = max(0, (p.deadline - now).days)
+            deadline = p.deadline.replace(tzinfo=UZB_TZ) if p.deadline.tzinfo is None else p.deadline
+            days_left = max(0, (deadline - now).days)
 
         items.append(
             PromotionResponse(
@@ -98,7 +99,8 @@ async def get_promotion(promo_id: int, db: Session = Depends(get_db)):
     now = datetime.now(UZB_TZ)
     days_left = None
     if p.deadline:
-        days_left = max(0, (p.deadline - now).days)
+        deadline = p.deadline.replace(tzinfo=UZB_TZ) if p.deadline.tzinfo is None else p.deadline
+        days_left = max(0, (deadline - now).days)
 
     return PromotionResponse(
         id=p.id,
