@@ -35,6 +35,10 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#0a0a0f' },
       ],
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+      script: [
+        { src: 'https://www.googletagmanager.com/gtag/js?id=G-EGNW50GSQZ', async: true },
+        { children: "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EGNW50GSQZ');" },
+      ],
     },
   },
 
