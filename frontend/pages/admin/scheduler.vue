@@ -13,6 +13,23 @@ const showConfirmModal = ref(false)
 const confirmJobId = ref('')
 const confirmJobName = ref('')
 
+const utilityJobs = [
+  { id: 'regenerate_images', name: 'Rasmsiz e\'lonlarga rasm yaratish', description: 'Image_url bo\'sh bo\'lgan barcha aktiv e\'lonlarga brendli rasm generatsiya qiladi' },
+]
+const triggeringUtility = ref<string | null>(null)
+
+async function handleUtilityTrigger(jobId: string) {
+  triggeringUtility.value = jobId
+  try {
+    const result = await triggerJob(jobId)
+    showSuccess(result.message)
+  } catch {
+    showError('Job ishga tushirishda xatolik')
+  } finally {
+    triggeringUtility.value = null
+  }
+}
+
 const columns = [
   { key: 'id', label: 'ID' },
   { key: 'name', label: 'Nomi' },
@@ -100,6 +117,30 @@ onMounted(loadJobs)
         </div>
       </template>
     </AdminDataTable>
+
+    <!-- Utility Jobs -->
+    <div class="mt-10">
+      <h3 class="text-lg font-bold text-white mb-4">Qo'shimcha amallar</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          v-for="job in utilityJobs"
+          :key="job.id"
+          class="glass-card p-5 flex items-center justify-between gap-4"
+        >
+          <div>
+            <p class="text-white font-medium">{{ job.name }}</p>
+            <p class="text-gray-500 text-sm mt-1">{{ job.description }}</p>
+          </div>
+          <button
+            :disabled="triggeringUtility === job.id"
+            class="shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors disabled:opacity-50"
+            @click="handleUtilityTrigger(job.id)"
+          >
+            {{ triggeringUtility === job.id ? 'Ishlamoqda...' : 'Ishga tushirish' }}
+          </button>
+        </div>
+      </div>
+    </div>
 
     <AdminModal
       :show="showConfirmModal"
