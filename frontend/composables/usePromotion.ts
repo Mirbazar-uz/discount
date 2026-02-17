@@ -10,6 +10,7 @@ interface Promotion {
   deadline_text?: string
   source_url?: string
   image_url?: string
+  image_urls?: string[]
   status: string
   store: string
   store_slug: string

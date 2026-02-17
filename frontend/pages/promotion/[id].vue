@@ -7,6 +7,15 @@ const { getPromotion, formatPrice } = usePromotion()
 const promotion = ref<any>(null)
 const error = ref(false)
 const loading = ref(true)
+const activeImage = ref(0)
+const lightboxOpen = ref(false)
+
+const allImages = computed<string[]>(() => {
+  if (!promotion.value) return []
+  if (promotion.value.image_urls?.length) return promotion.value.image_urls
+  if (promotion.value.image_url) return [promotion.value.image_url]
+  return []
+})
 
 async function loadData() {
   loading.value = true
@@ -19,7 +28,34 @@ async function loadData() {
   }
 }
 
+function prevImage() {
+  activeImage.value = activeImage.value > 0
+    ? activeImage.value - 1
+    : allImages.value.length - 1
+}
+
+function nextImage() {
+  activeImage.value = activeImage.value < allImages.value.length - 1
+    ? activeImage.value + 1
+    : 0
+}
+
+function openLightbox(index: number) {
+  activeImage.value = index
+  lightboxOpen.value = true
+  document.body.style.overflow = 'hidden'
+}
+
+function closeLightbox() {
+  lightboxOpen.value = false
+  document.body.style.overflow = ''
+}
+
 onMounted(loadData)
+
+onUnmounted(() => {
+  document.body.style.overflow = ''
+})
 
 useHead({
   title: computed(() =>
@@ -53,31 +89,88 @@ useHead({
       </div>
 
       <!-- Loading skeleton -->
-      <div v-else-if="loading" class="glass-card p-8 space-y-6">
-        <div class="flex items-center gap-3">
-          <div class="h-8 w-20 skeleton rounded-full"></div>
-          <div class="h-4 w-24 skeleton rounded"></div>
+      <div v-else-if="loading" class="glass-card overflow-hidden">
+        <div class="h-64 md:h-80 skeleton"></div>
+        <div class="p-8 space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-20 skeleton rounded-full"></div>
+            <div class="h-4 w-24 skeleton rounded"></div>
+          </div>
+          <div class="h-8 w-3/4 skeleton rounded"></div>
+          <div class="h-5 w-full skeleton rounded"></div>
+          <div class="flex gap-4">
+            <div class="h-8 w-32 skeleton rounded"></div>
+            <div class="h-8 w-40 skeleton rounded"></div>
+          </div>
+          <div class="h-14 w-48 skeleton rounded-full"></div>
         </div>
-        <div class="h-8 w-3/4 skeleton rounded"></div>
-        <div class="h-5 w-full skeleton rounded"></div>
-        <div class="flex gap-4">
-          <div class="h-8 w-32 skeleton rounded"></div>
-          <div class="h-8 w-40 skeleton rounded"></div>
-        </div>
-        <div class="h-14 w-48 skeleton rounded-full"></div>
       </div>
 
       <!-- Promotion detail -->
       <div v-else-if="promotion" class="animate-fade-in-up">
         <div class="glass-card overflow-hidden">
-          <!-- Image -->
-          <div v-if="promotion.image_url" class="relative h-64 md:h-80 overflow-hidden">
-            <img
-              :src="promotion.image_url"
-              :alt="promotion.title"
-              class="w-full h-full object-cover"
-            />
-            <div class="absolute inset-0" style="background: linear-gradient(to bottom, transparent 50%, rgba(10,10,15,0.95))"></div>
+          <!-- Image Gallery -->
+          <div v-if="allImages.length" class="relative">
+            <!-- Main image -->
+            <div
+              class="relative h-72 md:h-96 overflow-hidden cursor-pointer"
+              @click="openLightbox(activeImage)"
+            >
+              <img
+                :src="allImages[activeImage]"
+                :alt="promotion.title"
+                class="w-full h-full object-cover transition-opacity duration-300"
+              />
+              <div class="absolute inset-0" style="background: linear-gradient(to bottom, transparent 60%, rgba(10,10,15,0.95))"></div>
+
+              <!-- Image counter -->
+              <div
+                v-if="allImages.length > 1"
+                class="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-xs text-gray-300 border border-white/10"
+              >
+                {{ activeImage + 1 }} / {{ allImages.length }}
+              </div>
+
+              <!-- Prev/Next arrows -->
+              <template v-if="allImages.length > 1">
+                <button
+                  class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-all"
+                  @click.stop="prevImage"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                  </svg>
+                </button>
+                <button
+                  class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/70 transition-all"
+                  @click.stop="nextImage"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </button>
+              </template>
+            </div>
+
+            <!-- Thumbnails -->
+            <div
+              v-if="allImages.length > 1"
+              class="flex gap-2 p-4 overflow-x-auto"
+              style="scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent"
+            >
+              <button
+                v-for="(url, i) in allImages"
+                :key="i"
+                class="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200"
+                :class="activeImage === i
+                  ? 'border-purple-500 shadow-[0_0_12px_rgba(124,58,237,0.3)]'
+                  : 'border-white/10 hover:border-white/30 opacity-60 hover:opacity-100'
+                "
+                @click="activeImage = i"
+              >
+                <img :src="url" :alt="`Rasm ${i + 1}`" class="w-full h-full object-cover" />
+              </button>
+            </div>
           </div>
 
           <div class="p-8 md:p-10">
@@ -150,4 +243,67 @@ useHead({
       </div>
     </div>
   </div>
+
+  <!-- Lightbox -->
+  <Teleport to="body">
+    <Transition
+      enter-active-class="transition-opacity duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="lightboxOpen && allImages.length"
+        class="fixed inset-0 z-[80] bg-black/95 flex items-center justify-center"
+        @click.self="closeLightbox"
+      >
+        <!-- Close button -->
+        <button
+          class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+          @click="closeLightbox"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+
+        <!-- Counter -->
+        <div
+          v-if="allImages.length > 1"
+          class="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-white/10 text-sm text-white/80"
+        >
+          {{ activeImage + 1 }} / {{ allImages.length }}
+        </div>
+
+        <!-- Image -->
+        <img
+          :src="allImages[activeImage]"
+          :alt="promotion?.title"
+          class="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
+        />
+
+        <!-- Navigation -->
+        <template v-if="allImages.length > 1">
+          <button
+            class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+            @click="prevImage"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button
+            class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+            @click="nextImage"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </template>
+      </div>
+    </Transition>
+  </Teleport>
 </template>

@@ -33,6 +33,18 @@ class Store(Base):
     stats = relationship("StoreStats", back_populates="store")
 
 
+class PromotionImage(Base):
+    __tablename__ = "promotion_images"
+
+    id = Column(Integer, primary_key=True)
+    promotion_id = Column(Integer, ForeignKey("promotions.id", ondelete="CASCADE"), nullable=False)
+    image_url = Column(String(500), nullable=False)
+    position = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    promotion = relationship("Promotion", back_populates="images")
+
+
 class Promotion(Base):
     __tablename__ = "promotions"
 
@@ -69,6 +81,12 @@ class Promotion(Base):
     generated_image_path = Column(String(300))
 
     store = relationship("Store", back_populates="promotions")
+    images = relationship(
+        "PromotionImage",
+        back_populates="promotion",
+        order_by="PromotionImage.position",
+        cascade="all, delete-orphan",
+    )
 
 
 class StoreStats(Base):

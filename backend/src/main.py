@@ -34,7 +34,10 @@ class MirbazarApp:
         self.settings = Settings()
 
         self.scraper = TelegramScraper()
-        self.groq = GroqClient(self.settings.GROQ_API_KEY)
+        self.groq = GroqClient(
+            self.settings.GROQ_API_KEY,
+            vision_model=self.settings.GROQ_VISION_MODEL,
+        )
         self.validator = PromotionValidator()
         self.image_gen = ImageGenerator()
         self.telegram = TelegramPoster(
@@ -82,7 +85,17 @@ class MirbazarApp:
                 if promo_crud.exists_by_source_id(post["post_id"]):
                     continue
 
-                parsed = self.groq.parse_promotion(post["text"], channel["name"])
+                image_urls = post.get("image_urls", [])
+                if not image_urls and post.get("image_url"):
+                    image_urls = [post["image_url"]]
+
+                if image_urls:
+                    parsed = self.groq.parse_promotion_with_image(
+                        post["text"], image_urls, channel["name"]
+                    )
+                else:
+                    parsed = self.groq.parse_promotion(post["text"], channel["name"])
+
                 if not parsed:
                     continue
 
@@ -93,7 +106,8 @@ class MirbazarApp:
                     data=validated,
                     source_post_id=post["post_id"],
                     source_url=post["post_link"],
-                    image_url=post.get("image_url"),
+                    image_url=image_urls[0] if image_urls else None,
+                    image_urls=image_urls,
                 )
 
                 if promotion and validated.get("is_active"):

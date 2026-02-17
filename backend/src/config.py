@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://mirbazar:password@db:5432/mirbazar"
 
     GROQ_API_KEY: str = ""
+    GROQ_VISION_MODEL: str = "llama-3.2-90b-vision-preview"
 
     TELEGRAM_BOT_TOKEN: str = ""
     TELEGRAM_CHANNEL_ID: str = "@mirbazar_uz"

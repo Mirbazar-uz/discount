@@ -27,6 +27,7 @@ class PromotionResponse(BaseModel):
     deadline_text: Optional[str] = None
     source_url: Optional[str] = None
     image_url: Optional[str] = None
+    image_urls: List[str] = []
     status: str = "active"
     store: str = ""
     store_slug: str = ""

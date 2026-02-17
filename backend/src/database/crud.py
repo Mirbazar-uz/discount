@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Optional, List
 from zoneinfo import ZoneInfo
 
-from .models import Promotion, Store, StoreStats, PostLog, PromotionStatus
+from .models import Promotion, PromotionImage, Store, StoreStats, PostLog, PromotionStatus
 
 UZB_TZ = ZoneInfo("Asia/Tashkent")
 
@@ -54,6 +54,7 @@ class PromotionCRUD:
         source_post_id: str,
         source_url: str,
         image_url: Optional[str] = None,
+        image_urls: Optional[List[str]] = None,
     ) -> Optional[Promotion]:
         try:
             deadline = None
@@ -84,6 +85,18 @@ class PromotionCRUD:
             self.db.add(promotion)
             self.db.commit()
             self.db.refresh(promotion)
+
+            urls = image_urls or ([image_url] if image_url else [])
+            for i, url in enumerate(urls):
+                img = PromotionImage(
+                    promotion_id=promotion.id,
+                    image_url=url,
+                    position=i,
+                )
+                self.db.add(img)
+            if urls:
+                self.db.commit()
+
             return promotion
         except Exception as e:
             self.db.rollback()

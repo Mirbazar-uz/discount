@@ -1,4 +1,5 @@
 TELEGRAM_CHANNELS = [
+    # === ELECTRONICS ===
     {
         "slug": "texnomart",
         "name": "Texnomart",
@@ -39,6 +40,7 @@ TELEGRAM_CHANNELS = [
         "category": "electronics",
         "color": "#f97316",
     },
+    # === GROCERY ===
     {
         "slug": "korzinka",
         "name": "Korzinka",
@@ -62,5 +64,48 @@ TELEGRAM_CHANNELS = [
         "url": "https://t.me/s/havasuz",
         "category": "grocery",
         "color": "#10b981",
+    },
+    # === MARKETPLACE ===
+    {
+        "slug": "uzum",
+        "name": "Uzum Market",
+        "channel": "uzum_market",
+        "url": "https://t.me/s/uzum_market",
+        "category": "marketplace",
+        "color": "#7c3aed",
+    },
+    {
+        "slug": "sello",
+        "name": "Sello",
+        "channel": "sellouz",
+        "url": "https://t.me/s/sellouz",
+        "category": "marketplace",
+        "color": "#06b6d4",
+    },
+    # === FASHION ===
+    {
+        "slug": "lcwaikiki",
+        "name": "LC Waikiki",
+        "channel": "lcwaikiki_uzbekistan",
+        "url": "https://t.me/s/lcwaikiki_uzbekistan",
+        "category": "fashion",
+        "color": "#e11d48",
+    },
+    # === PHONES ===
+    {
+        "slug": "samsung",
+        "name": "Samsung UZ",
+        "channel": "SamsungUzbekistan",
+        "url": "https://t.me/s/SamsungUzbekistan",
+        "category": "phones",
+        "color": "#1d4ed8",
+    },
+    {
+        "slug": "xiaomi",
+        "name": "Xiaomi UZ",
+        "channel": "XiaomiUzbekistanOfficial",
+        "url": "https://t.me/s/XiaomiUzbekistanOfficial",
+        "category": "phones",
+        "color": "#fb923c",
     },
 ]

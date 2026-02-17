@@ -72,9 +72,13 @@ class TelegramScraper:
         post_link = link_tag.get("href", "") if link_tag else ""
         post_id = post_link.split("/")[-1] if post_link else ""
 
-        photo_wrap = wrap.find("a", class_="tgme_widget_message_photo_wrap")
-        image_style = photo_wrap.get("style", "") if photo_wrap else ""
-        image_url = extract_image_url(image_style)
+        photo_wraps = wrap.find_all("a", class_="tgme_widget_message_photo_wrap")
+        image_urls = []
+        for pw in photo_wraps:
+            img_style = pw.get("style", "")
+            url = extract_image_url(img_style)
+            if url:
+                image_urls.append(url)
 
         views_span = wrap.find("span", class_="tgme_widget_message_views")
         views = views_span.get_text(strip=True) if views_span else "0"
@@ -85,7 +89,8 @@ class TelegramScraper:
             "date": date_str,
             "post_link": post_link,
             "post_id": post_id,
-            "image_url": image_url,
+            "image_url": image_urls[0] if image_urls else None,
+            "image_urls": image_urls,
             "views": views,
         }
 
