@@ -61,18 +61,20 @@ class ImageGenerator:
         self.output_path.mkdir(exist_ok=True)
 
         self.f = {
-            "mega":  self._font("Inter-Bold.ttf", 160),
-            "hero":  self._font("Inter-Bold.ttf", 84),
-            "disc2": self._font("Inter-Bold.ttf", 72),
-            "title": self._font("Inter-Bold.ttf", 60),
+            "ultra": self._font("Inter-Bold.ttf", 300),
+            "mega":  self._font("Inter-Bold.ttf", 180),
+            "hero":  self._font("Inter-Bold.ttf", 120),
+            "big":   self._font("Inter-Bold.ttf", 90),
+            "title": self._font("Inter-Bold.ttf", 72),
             "price": self._font("Inter-Bold.ttf", 70),
             "old":   self._font("Inter-Bold.ttf", 40),
             "sub":   self._font("Inter-Bold.ttf", 44),
             "body":  self._font("Inter-Bold.ttf", 36),
-            "label": self._font("Inter-Regular.ttf", 30),
-            "small": self._font("Inter-Regular.ttf", 26),
+            "label": self._font("Inter-Regular.ttf", 34),
+            "small": self._font("Inter-Regular.ttf", 28),
             "brand": self._font("Inter-Bold.ttf", 42),
-            "store": self._font("Inter-Bold.ttf", 34),
+            "store": self._font("Inter-Bold.ttf", 38),
+            "dead":  self._font("Inter-Bold.ttf", 38),
             "pos":   self._font("Inter-Bold.ttf", 48),
         }
 
@@ -106,12 +108,6 @@ class ImageGenerator:
             c = tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
             d.line([(x, y), (x, y + h - 1)], fill=c)
 
-    def _sep(self, d, y: int, w: int):
-        d.line(
-            [(w // 2 - 80, y), (w // 2 + 80, y)],
-            fill=_rgb(self.EDGE), width=1,
-        )
-
     def _corners(self, d, w: int, h: int):
         c = _rgb(self.EDGE)
         s, m = 25, 16
@@ -138,13 +134,13 @@ class ImageGenerator:
         )
 
     def _best_disc_font(self, d, disc: str, w: int):
-        max_w = w - 180
-        for key, lh in [("mega", 170), ("hero", 100), ("disc2", 85)]:
+        max_w = w - 120
+        for key, lh in [("ultra", 320), ("mega", 200), ("hero", 140), ("big", 110)]:
             font = self.f[key]
             lines = self._wrap(disc, font, max_w)
             if len(lines) <= 2:
                 return font, lines, lh
-        return self.f["disc2"], self._wrap(disc, self.f["disc2"], max_w)[:2], 85
+        return self.f["big"], self._wrap(disc, self.f["big"], max_w)[:2], 110
 
     # ── Promotion Image ──────────────────────────────────
 
@@ -165,153 +161,175 @@ class ImageGenerator:
         old_p, new_p = data.get("old_price"), data.get("new_price")
         dl = data.get("deadline_text")
 
-        title_lines = self._wrap(title, self.f["title"], W - 140)[:3]
+        title_lines = self._wrap(title, self.f["title"], W - 120)[:3]
 
         if disc:
             disc_font, disc_lines, disc_lh = self._best_disc_font(d, disc, W)
         else:
-            disc_font = self.f["hero"]
+            disc_font = self.f["mega"]
             disc_lines = ["AKSIYA"]
-            disc_lh = 110
+            disc_lh = 200
 
-        # Calculate banner height
-        banner_pad = 40
-        banner_h = max(disc_lh * len(disc_lines) + banner_pad * 2, 220)
-
-        # Vertical centering
-        h_est = 0
+        # ── Build layout blocks ──
+        blocks = []
         if store:
-            h_est += 80
-        h_est += banner_h + 30
-        h_est += len(title_lines) * 75 + 40
+            blocks.append(("store", 56))
+
+        disc_h = disc_lh * len(disc_lines)
+        blocks.append(("disc", disc_h))
+        blocks.append(("sep", 4))
+
+        title_h = 85 * len(title_lines)
+        blocks.append(("title", title_h))
+
         if old_p and new_p:
-            h_est += 300
+            blocks.append(("price_full", 250))
         elif new_p:
-            h_est += 160
+            blocks.append(("price_only", 100))
+
         if dl:
-            h_est += 70
+            blocks.append(("deadline", 60))
 
-        area_top = 50
-        area_bot = H - 170
-        y = area_top + max((area_bot - area_top - h_est) // 2, 0)
+        content_h = sum(h for _, h in blocks)
+        n_gaps = len(blocks) - 1
+        available = H - 50 - 170
 
-        # ─ Store pill ─
-        if store:
-            sw = self._tw(d, store, self.f["store"]) + 48
-            sx = (W - sw) // 2
-            d.rounded_rectangle(
-                [sx, y, sx + sw, y + 50], radius=25,
-                fill=_rgb(self.PILL), outline=_rgb(self.PILL_BD), width=1,
-            )
-            d.text(
-                (W // 2, y + 25), store,
-                font=self.f["store"], fill=_rgb(self.LT), anchor="mm",
-            )
-            y += 80
+        slack = available - content_h
+        gap = min(max(slack // max(n_gaps, 1), 24), 70)
+        total_h = content_h + gap * n_gaps
+        y = 50 + max((available - total_h) // 2, 0)
 
-        # ─ Discount Banner ─
-        banner_color = self.RD if disc else self.PR
-        d.rounded_rectangle(
-            [60, y, W - 60, y + banner_h], radius=20,
-            fill=_rgb(banner_color),
+        # ── Subtle ring decoration behind discount ──
+        disc_idx = next(i for i, (t, _) in enumerate(blocks) if t == "disc")
+        ring_y = y
+        for j in range(disc_idx):
+            ring_y += blocks[j][1] + gap
+        ring_cy = ring_y + disc_h // 2
+        ring_r = max(disc_h + 60, 300)
+        d.ellipse(
+            [W // 2 - ring_r, ring_cy - ring_r,
+             W // 2 + ring_r, ring_cy + ring_r],
+            outline=_rgb(self.EDGE), width=2,
         )
 
-        text_y = y + (banner_h - disc_lh * len(disc_lines)) // 2
-        for line in disc_lines:
-            d.text(
-                (W // 2, text_y + disc_lh // 2), line,
-                font=disc_font, fill=_rgb(self.WH), anchor="mm",
-            )
-            text_y += disc_lh
-
-        y += banner_h + 30
-
-        # ─ Title ─
-        for line in title_lines:
-            d.text(
-                (W // 2, y + 37), line,
-                font=self.f["title"], fill=_rgb(self.WH), anchor="mm",
-            )
-            y += 75
-        y += 40
-
-        # ─ Price card ─
-        if old_p and new_p:
-            ch = 290
-            ct = y
-
-            d.rounded_rectangle(
-                [50, ct, W - 50, ct + ch], radius=22,
-                fill=_rgb(self.CARD), outline=_rgb(self.EDGE), width=2,
-            )
-
-            py = ct + 28
-            otxt = f"{_fmt(old_p)} so'm"
-            d.text(
-                (W // 2, py + 14), otxt,
-                font=self.f["old"], fill=_rgb(self.DK), anchor="mm",
-            )
-            tw = self._tw(d, otxt, self.f["old"])
-            d.line(
-                [(W // 2 - tw // 2, py + 14), (W // 2 + tw // 2, py + 14)],
-                fill=_rgb(self.RD), width=3,
-            )
-            py += 55
-
-            d.text(
-                (W // 2, py), "▼",
-                font=self.f["small"], fill=_rgb(self.GN), anchor="mm",
-            )
-            py += 30
-
-            ntxt = f"{_fmt(new_p)} so'm"
-            d.text(
-                (W // 2, py + 22), ntxt,
-                font=self.f["price"], fill=_rgb(self.GN), anchor="mm",
-            )
-            py += 78
-
-            sav = float(old_p) - float(new_p)
-            if sav > 0:
-                stxt = f"Tejamkorlik: {_fmt(sav)} so'm"
-                stw = self._tw(d, stxt, self.f["label"]) + 36
-                sx = (W - stw) // 2
+        # ── Draw blocks ──
+        for i, (btype, bh) in enumerate(blocks):
+            if btype == "store":
+                sw = self._tw(d, store, self.f["store"]) + 56
+                sx = (W - sw) // 2
                 d.rounded_rectangle(
-                    [sx, py, sx + stw, py + 42], radius=21,
-                    fill=_rgb(self.GN_BG), outline=_rgb(self.GN_BD), width=1,
+                    [sx, y, sx + sw, y + bh], radius=28,
+                    fill=_rgb(self.PILL), outline=_rgb(self.PILL_BD),
                 )
                 d.text(
-                    (W // 2, py + 21), stxt,
-                    font=self.f["label"], fill=_rgb(self.GN), anchor="mm",
+                    (W // 2, y + bh // 2), store,
+                    font=self.f["store"], fill=_rgb(self.LT), anchor="mm",
                 )
 
-            y = ct + ch + 28
+            elif btype == "disc":
+                ty = y
+                for line in disc_lines:
+                    d.text(
+                        (W // 2, ty + disc_lh // 2), line,
+                        font=disc_font, fill=_rgb(self.RD), anchor="mm",
+                    )
+                    ty += disc_lh
 
-        elif new_p:
-            ch = 130
-            ct = y
-            d.rounded_rectangle(
-                [50, ct, W - 50, ct + ch], radius=22,
-                fill=_rgb(self.CARD), outline=_rgb(self.EDGE), width=2,
-            )
-            d.text(
-                (W // 2, ct + ch // 2), f"{_fmt(new_p)} so'm",
-                font=self.f["price"], fill=_rgb(self.GN), anchor="mm",
-            )
-            y = ct + ch + 28
+            elif btype == "sep":
+                sy = y + bh // 2
+                d.ellipse(
+                    [W // 2 - 124, sy - 3, W // 2 - 118, sy + 3],
+                    fill=_rgb(self.EDGE),
+                )
+                d.line(
+                    [(W // 2 - 100, sy), (W // 2 + 100, sy)],
+                    fill=_rgb(self.EDGE), width=1,
+                )
+                d.ellipse(
+                    [W // 2 + 118, sy - 3, W // 2 + 124, sy + 3],
+                    fill=_rgb(self.EDGE),
+                )
 
-        # ─ Deadline ─
-        if dl:
-            dw = self._tw(d, dl, self.f["label"]) + 44
-            dx = (W - dw) // 2
-            d.rounded_rectangle(
-                [dx, y, dx + dw, y + 48], radius=24,
-                fill=_rgb(self.AM_BG), outline=_rgb(self.AM_BD), width=1,
-            )
-            d.text(
-                (W // 2, y + 24), dl,
-                font=self.f["label"], fill=_rgb(self.AM), anchor="mm",
-            )
+            elif btype == "title":
+                ty = y
+                for line in title_lines:
+                    d.text(
+                        (W // 2, ty + 42), line,
+                        font=self.f["title"], fill=_rgb(self.WH), anchor="mm",
+                    )
+                    ty += 85
+
+            elif btype == "price_full":
+                ct = y
+                d.rounded_rectangle(
+                    [80, ct, W - 80, ct + bh], radius=22,
+                    fill=_rgb(self.CARD), outline=_rgb(self.EDGE), width=2,
+                )
+                py = ct + 28
+                otxt = f"{_fmt(old_p)} so'm"
+                d.text(
+                    (W // 2, py + 14), otxt,
+                    font=self.f["old"], fill=_rgb(self.DK), anchor="mm",
+                )
+                tw = self._tw(d, otxt, self.f["old"])
+                d.line(
+                    [(W // 2 - tw // 2, py + 14),
+                     (W // 2 + tw // 2, py + 14)],
+                    fill=_rgb(self.RD), width=3,
+                )
+                py += 50
+                d.text(
+                    (W // 2, py), "▼",
+                    font=self.f["small"], fill=_rgb(self.GN), anchor="mm",
+                )
+                py += 28
+                ntxt = f"{_fmt(new_p)} so'm"
+                d.text(
+                    (W // 2, py + 22), ntxt,
+                    font=self.f["price"], fill=_rgb(self.GN), anchor="mm",
+                )
+                py += 70
+                try:
+                    sav = float(old_p) - float(new_p)
+                except (TypeError, ValueError):
+                    sav = 0
+                if sav > 0:
+                    stxt = f"Tejamkorlik: {_fmt(sav)} so'm"
+                    stw = self._tw(d, stxt, self.f["label"]) + 36
+                    sx = (W - stw) // 2
+                    d.rounded_rectangle(
+                        [sx, py, sx + stw, py + 42], radius=21,
+                        fill=_rgb(self.GN_BG), outline=_rgb(self.GN_BD),
+                    )
+                    d.text(
+                        (W // 2, py + 21), stxt,
+                        font=self.f["label"], fill=_rgb(self.GN), anchor="mm",
+                    )
+
+            elif btype == "price_only":
+                ct = y
+                d.rounded_rectangle(
+                    [80, ct, W - 80, ct + bh], radius=22,
+                    fill=_rgb(self.CARD), outline=_rgb(self.EDGE), width=2,
+                )
+                d.text(
+                    (W // 2, ct + bh // 2), f"{_fmt(new_p)} so'm",
+                    font=self.f["price"], fill=_rgb(self.GN), anchor="mm",
+                )
+
+            elif btype == "deadline":
+                dw = self._tw(d, dl, self.f["dead"]) + 52
+                dx = (W - dw) // 2
+                d.rounded_rectangle(
+                    [dx, y, dx + dw, y + bh], radius=30,
+                    fill=_rgb(self.AM_BG), outline=_rgb(self.AM_BD),
+                )
+                d.text(
+                    (W // 2, y + bh // 2), dl,
+                    font=self.f["dead"], fill=_rgb(self.AM), anchor="mm",
+                )
+
+            y += bh + gap
 
         self._footer(d, W, H)
         self._accent(d, H - 5, W)
