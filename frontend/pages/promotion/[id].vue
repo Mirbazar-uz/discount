@@ -249,7 +249,7 @@ useHead({
             </p>
 
             <!-- Discount badge large -->
-            <div class="mb-6">
+            <div v-if="promotion.discount_text || promotion.discount_percent" class="mb-6">
               <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 text-red-400 font-bold text-lg">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>

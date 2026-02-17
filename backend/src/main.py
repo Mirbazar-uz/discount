@@ -4,8 +4,11 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone as tz
 from zoneinfo import ZoneInfo
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from .config import Settings
 from .scraper.telegram_scraper import TelegramScraper
@@ -96,10 +99,13 @@ class MirbazarApp:
                 else:
                     parsed = self.groq.parse_promotion(post["text"], channel["name"])
 
-                if not parsed:
+                if not parsed or parsed.get("is_promotion") is False:
                     continue
 
                 validated = self.validator.validate(parsed)
+
+                if validated.get("low_confidence"):
+                    continue
 
                 promotion = promo_crud.create(
                     store_id=store.id,
@@ -118,6 +124,12 @@ class MirbazarApp:
                     }
                     image_path = self.image_gen.create_promotion_image(image_data)
                     promo_crud.update_image_path(promotion.id, image_path)
+
+                    if not image_urls:
+                        filename = Path(image_path).name
+                        promo_crud.update_display_image(
+                            promotion.id, f"/images/{filename}"
+                        )
 
                     await self._post_to_telegram(promotion, image_path)
                     await self._post_to_instagram(promotion, image_path, promo_crud)
@@ -261,6 +273,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+generated_images_dir = Path("generated_images")
+generated_images_dir.mkdir(exist_ok=True)
+app.mount("/images", StaticFiles(directory=str(generated_images_dir)), name="images")
 
 app.include_router(router)
 app.include_router(admin_router)

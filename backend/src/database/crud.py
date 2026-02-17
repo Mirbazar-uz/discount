@@ -118,6 +118,12 @@ class PromotionCRUD:
             )
             self.db.commit()
 
+    def update_display_image(self, promo_id: int, image_url: str):
+        self.db.query(Promotion).filter(Promotion.id == promo_id).update(
+            {"image_url": image_url}
+        )
+        self.db.commit()
+
     def mark_posted(self, promo_id: int, platform: str, post_id: str):
         updates: Dict = {}
         if platform == "telegram":

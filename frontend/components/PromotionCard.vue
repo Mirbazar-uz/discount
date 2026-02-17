@@ -63,7 +63,10 @@ function formatPrice(price: number): string {
       ></div>
 
       <!-- Discount badge -->
-      <div class="absolute top-3 right-3 z-10 badge-discount text-base">
+      <div
+        v-if="promotion.discount_text || promotion.discount_percent"
+        class="absolute top-3 right-3 z-10 badge-discount text-base"
+      >
         {{ promotion.discount_text || `-${promotion.discount_percent}%` }}
       </div>
 

@@ -10,6 +10,7 @@ BUGUNGI SANA: {today}
 Quyidagi JSON strukturada javob ber:
 
 {{
+    "is_promotion": true,
     "title": "Mahsulot nomi (qisqa, 50 belgigacha)",
     "description": "Qo'shimcha tavsif (100 belgigacha)",
     "old_price": 0,
@@ -22,6 +23,12 @@ Quyidagi JSON strukturada javob ber:
     "is_active": true,
     "confidence": 0.9
 }}
+
+MUHIM FILTRLASH QOIDALARI:
+- Agar post HAQIQIY mahsulot chegirmasi/aksiyasi EMAS bo'lsa — "is_promotion": false, "confidence": 0.0 qaytar.
+- Haqiqiy chegirma uchun ALBATTA mahsulot nomi VA narx pasaytirish yoki aniq chegirma foizi bo'lishi kerak.
+- Quyidagilar chegirma EMAS: o'yinlar, viktorinalar, so'rovnomalar, maslahatlar, "top mahsulotlar" ro'yxati (narxsiz), yangiliklar, e'lonlar, suhbatlar, hazillar, tabriklar.
+- Agar post faqat "arzon narxlar" yoki "foydali" desa lekin ANIQ narx/chegirma ko'rsatmasa — bu chegirma emas.
 
 QOIDALAR:
 1. Narxlarni so'mda yoz (million emas): 18500000, 5550000
@@ -48,6 +55,7 @@ BUGUNGI SANA: {today}
 Quyidagi JSON strukturada javob ber:
 
 {{
+    "is_promotion": true,
     "title": "Mahsulot nomi (qisqa, 50 belgigacha)",
     "description": "Qo'shimcha tavsif (100 belgigacha)",
     "old_price": 0,
@@ -60,6 +68,12 @@ Quyidagi JSON strukturada javob ber:
     "is_active": true,
     "confidence": 0.9
 }}
+
+MUHIM FILTRLASH QOIDALARI:
+- Agar post HAQIQIY mahsulot chegirmasi/aksiyasi EMAS bo'lsa — "is_promotion": false, "confidence": 0.0 qaytar.
+- Haqiqiy chegirma uchun ALBATTA mahsulot nomi VA narx pasaytirish yoki aniq chegirma foizi bo'lishi kerak.
+- Quyidagilar chegirma EMAS: o'yinlar, viktorinalar, so'rovnomalar, maslahatlar, "top mahsulotlar" ro'yxati (narxsiz), yangiliklar, e'lonlar, suhbatlar, hazillar, tabriklar.
+- Agar post faqat "arzon narxlar" yoki "foydali" desa lekin ANIQ narx/chegirma ko'rsatmasa — bu chegirma emas.
 
 QOIDALAR:
 1. Narxlarni so'mda yoz (million emas): 18500000, 5550000

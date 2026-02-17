@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import Dict
 
@@ -35,6 +36,11 @@ class PromotionValidator:
                     / result["old_price"]
                 ) * 100
                 result["discount_percent"] = round(discount)
+
+        if not result.get("discount_percent") and result.get("discount_text"):
+            match = re.search(r'(\d+)\s*%', result["discount_text"])
+            if match:
+                result["discount_percent"] = int(match.group(1))
 
         if result.get("confidence", 0) < 0.5:
             result["low_confidence"] = True
