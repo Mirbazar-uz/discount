@@ -4,9 +4,11 @@ const id = Number(route.params.id)
 
 const { getPromotion, formatPrice } = usePromotion()
 
-const promotion = ref<any>(null)
-const error = ref(false)
-const loading = ref(true)
+const { data: promotion, error, status } = await useAsyncData(
+  `promotion-${id}`,
+  () => getPromotion(id),
+)
+
 const activeImage = ref(0)
 const lightboxOpen = ref(false)
 
@@ -22,16 +24,63 @@ const hasPrices = computed(() => {
   return promotion.value.old_price || promotion.value.new_price
 })
 
-async function loadData() {
-  loading.value = true
-  try {
-    promotion.value = await getPromotion(id)
-  } catch {
-    error.value = true
-  } finally {
-    loading.value = false
-  }
-}
+const pageTitle = computed(() =>
+  promotion.value ? `${promotion.value.title} — Mirbazar` : 'Aksiya — Mirbazar'
+)
+
+const pageDescription = computed(() => {
+  if (!promotion.value) return "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar"
+  const parts = [promotion.value.title]
+  if (promotion.value.store) parts.push(`${promotion.value.store} do'konida`)
+  if (promotion.value.discount_text) parts.push(`${promotion.value.discount_text} chegirma`)
+  else if (promotion.value.discount_percent) parts.push(`${promotion.value.discount_percent}% chegirma`)
+  return parts.join(' — ')
+})
+
+const pageImage = computed(() => {
+  if (allImages.value.length) return allImages.value[0]
+  return 'https://mirbazar.uz/og-image.png'
+})
+
+const pageUrl = computed(() => `https://mirbazar.uz/promotion/${id}`)
+
+useSeoMeta({
+  title: pageTitle,
+  ogTitle: pageTitle,
+  description: pageDescription,
+  ogDescription: pageDescription,
+  ogImage: pageImage,
+  ogUrl: pageUrl,
+  ogType: 'product',
+  twitterCard: 'summary_large_image',
+  twitterTitle: pageTitle,
+  twitterDescription: pageDescription,
+  twitterImage: pageImage,
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: pageUrl }],
+  script: computed(() => {
+    if (!promotion.value) return []
+    const schema: Record<string, any> = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: promotion.value.title,
+      image: pageImage.value,
+      brand: { '@type': 'Brand', name: promotion.value.store || 'Mirbazar' },
+    }
+    if (promotion.value.new_price) {
+      schema.offers = {
+        '@type': 'Offer',
+        price: promotion.value.new_price,
+        priceCurrency: 'UZS',
+        availability: 'https://schema.org/InStock',
+        url: pageUrl.value,
+      }
+    }
+    return [{ type: 'application/ld+json', innerHTML: JSON.stringify(schema) }]
+  }),
+})
 
 function prevImage() {
   activeImage.value = activeImage.value > 0
@@ -56,16 +105,8 @@ function closeLightbox() {
   document.body.style.overflow = ''
 }
 
-onMounted(loadData)
-
 onUnmounted(() => {
   document.body.style.overflow = ''
-})
-
-useHead({
-  title: computed(() =>
-    promotion.value ? `${promotion.value.title} — Mirbazar` : 'Aksiya — Mirbazar'
-  ),
 })
 </script>
 
@@ -109,7 +150,7 @@ useHead({
       </div>
 
       <!-- Loading skeleton -->
-      <div v-else-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div v-else-if="status === 'pending'" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="space-y-3">
           <div class="aspect-square skeleton rounded-2xl"></div>
           <div class="flex gap-3">

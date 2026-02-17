@@ -143,8 +143,10 @@ class MirbazarApp:
             "old_price": promotion.old_price,
             "new_price": promotion.new_price,
             "discount_text": promotion.discount_text,
+            "discount_percent": promotion.discount_percent,
             "deadline_text": promotion.deadline_text,
             "source_url": promotion.source_url,
+            "id": promotion.id,
         }
 
         db = self._get_db_session()
@@ -168,6 +170,7 @@ class MirbazarApp:
             "old_price": promotion.old_price,
             "new_price": promotion.new_price,
             "discount_text": promotion.discount_text,
+            "discount_percent": promotion.discount_percent,
             "deadline_text": promotion.deadline_text,
         }
 

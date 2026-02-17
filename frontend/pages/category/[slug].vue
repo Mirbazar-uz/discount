@@ -39,8 +39,27 @@ async function loadData() {
 
 onMounted(loadData)
 
+const categoryTitle = computed(() => `${categoryName.value} aksiyalari — Mirbazar`)
+const categoryDescription = computed(
+  () => `${categoryName.value} bo'yicha eng yaxshi aksiyalar va chegirmalar. Mirbazar.uz da barcha narxlar bir joyda.`
+)
+const categoryUrl = computed(() => `https://mirbazar.uz/category/${slug}`)
+
+useSeoMeta({
+  title: categoryTitle,
+  ogTitle: categoryTitle,
+  description: categoryDescription,
+  ogDescription: categoryDescription,
+  ogUrl: categoryUrl,
+  ogImage: 'https://mirbazar.uz/og-image.png',
+  twitterCard: 'summary_large_image',
+  twitterTitle: categoryTitle,
+  twitterDescription: categoryDescription,
+  twitterImage: 'https://mirbazar.uz/og-image.png',
+})
+
 useHead({
-  title: `${categoryName.value} — Mirbazar`,
+  link: [{ rel: 'canonical', href: categoryUrl }],
 })
 </script>
 

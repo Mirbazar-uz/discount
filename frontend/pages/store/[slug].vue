@@ -4,32 +4,39 @@ const slug = route.params.slug as string
 
 const { getPromotions } = usePromotion()
 
-const promotions = ref<any[]>([])
-const total = ref(0)
-const storeName = ref(slug)
-const loading = ref(true)
+const { data, error, status } = await useAsyncData(
+  `store-${slug}`,
+  () => getPromotions({ stores: slug }),
+)
 
-async function loadData() {
-  loading.value = true
-  try {
-    const data = await getPromotions({ stores: slug })
-    promotions.value = data.promotions
-    total.value = data.total
+const promotions = computed(() => data.value?.promotions ?? [])
+const total = computed(() => data.value?.total ?? 0)
+const storeName = computed(() => {
+  if (promotions.value.length > 0) return promotions.value[0].store
+  return slug
+})
 
-    if (data.promotions.length > 0) {
-      storeName.value = data.promotions[0].store
-    }
-  } catch {
-    promotions.value = []
-  } finally {
-    loading.value = false
-  }
-}
+const storeTitle = computed(() => `${storeName.value} aksiyalari — Mirbazar`)
+const storeDescription = computed(
+  () => `${storeName.value} do'konining barcha aksiyalari va chegirmalari. Mirbazar.uz da eng yaxshi narxlar.`
+)
+const storeUrl = computed(() => `https://mirbazar.uz/store/${slug}`)
 
-onMounted(loadData)
+useSeoMeta({
+  title: storeTitle,
+  ogTitle: storeTitle,
+  description: storeDescription,
+  ogDescription: storeDescription,
+  ogUrl: storeUrl,
+  ogImage: 'https://mirbazar.uz/og-image.png',
+  twitterCard: 'summary_large_image',
+  twitterTitle: storeTitle,
+  twitterDescription: storeDescription,
+  twitterImage: 'https://mirbazar.uz/og-image.png',
+})
 
 useHead({
-  title: computed(() => `${storeName.value} aksiyalari — Mirbazar`),
+  link: [{ rel: 'canonical', href: storeUrl }],
 })
 </script>
 
@@ -62,13 +69,13 @@ useHead({
       </div>
 
       <!-- Loading skeleton -->
-      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="status === 'pending'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <PromotionSkeleton v-for="i in 6" :key="i" />
       </div>
 
       <!-- Promotions -->
       <div
-        v-else-if="promotions.length"
+        v-else-if="promotions.length > 0"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <PromotionCard

@@ -85,8 +85,21 @@ onMounted(() => {
   loadStores()
 })
 
-useHead({
+useSeoMeta({
   title: 'Mirbazar — Barcha chegirmalar bir joyda',
+  ogTitle: 'Mirbazar — Barcha chegirmalar bir joyda',
+  description: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+  ogDescription: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+  ogUrl: 'https://mirbazar.uz',
+  ogImage: 'https://mirbazar.uz/og-image.png',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Mirbazar — Barcha chegirmalar bir joyda',
+  twitterDescription: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+  twitterImage: 'https://mirbazar.uz/og-image.png',
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://mirbazar.uz' }],
 })
 </script>
 
