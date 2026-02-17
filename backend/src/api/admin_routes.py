@@ -274,6 +274,7 @@ async def trigger_job(
         "monthly_summary": mirbazar_app.post_monthly_summary,
         "cleanup": mirbazar_app.cleanup_expired_promotions,
         "regenerate_images": mirbazar_app.regenerate_missing_images,
+        "regenerate_all_images": mirbazar_app.regenerate_all_images,
     }
 
     job_func = job_map.get(job_id)

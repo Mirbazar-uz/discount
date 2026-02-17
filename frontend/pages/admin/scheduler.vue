@@ -15,6 +15,7 @@ const confirmJobName = ref('')
 
 const utilityJobs = [
   { id: 'regenerate_images', name: 'Rasmsiz e\'lonlarga rasm yaratish', description: 'Image_url bo\'sh bo\'lgan barcha aktiv e\'lonlarga brendli rasm generatsiya qiladi' },
+  { id: 'regenerate_all_images', name: 'Barcha rasmlarni qayta yaratish', description: 'Barcha aktiv e\'lonlar uchun professional rasmlarni qayta generatsiya qiladi' },
 ]
 const triggeringUtility = ref<string | null>(null)
 

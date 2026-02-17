@@ -277,6 +277,49 @@ class MirbazarApp:
         finally:
             db.close()
 
+    async def regenerate_all_images(self):
+        logger.info("Barcha aktiv e'lonlar uchun rasmlar qayta generatsiya qilinmoqda...")
+
+        db = self._get_db_session()
+        try:
+            from .database.models import Promotion, PromotionStatus
+
+            active_promos = (
+                db.query(Promotion)
+                .filter(Promotion.status == PromotionStatus.ACTIVE)
+                .all()
+            )
+
+            count = 0
+            promo_crud = PromotionCRUD(db)
+
+            for promo in active_promos:
+                try:
+                    image_data = {
+                        "title": promo.title,
+                        "store": promo.store.name if promo.store else "",
+                        "old_price": promo.old_price,
+                        "new_price": promo.new_price,
+                        "discount_text": promo.discount_text,
+                        "discount_percent": promo.discount_percent,
+                        "deadline_text": promo.deadline_text,
+                        "id": promo.id,
+                    }
+                    image_path = self.image_gen.create_promotion_image(image_data)
+                    promo_crud.update_image_path(promo.id, image_path)
+
+                    filename = Path(image_path).name
+                    promo_crud.update_display_image(
+                        promo.id, f"/images/{filename}"
+                    )
+                    count += 1
+                except Exception as e:
+                    logger.error("Rasm qayta generatsiya xatosi (id=%s): %s", promo.id, e)
+
+            logger.info("Jami %d ta e'lon uchun rasm qayta yaratildi", count)
+        finally:
+            db.close()
+
     async def cleanup_expired_promotions(self):
         logger.info("Tozalash...")
 
