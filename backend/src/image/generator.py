@@ -139,7 +139,9 @@ class ImageGenerator:
             font = self.f[key]
             lines = self._wrap(disc, font, max_w)
             if len(lines) <= 2:
-                return font, lines, lh
+                fits = all(self._tw(d, ln, font) <= max_w for ln in lines)
+                if fits:
+                    return font, lines, lh
         return self.f["big"], self._wrap(disc, self.f["big"], max_w)[:2], 110
 
     # ── Promotion Image ──────────────────────────────────
