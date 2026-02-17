@@ -17,7 +17,7 @@ function onInput(event: Event) {
 
 <template>
   <div
-    class="relative flex-1 min-w-[250px] transition-all duration-300"
+    class="relative flex-1 min-w-0 sm:min-w-[250px] transition-all duration-300"
     :class="focused ? 'scale-[1.01]' : ''"
   >
     <svg

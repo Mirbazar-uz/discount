@@ -15,7 +15,7 @@ defineProps<{
 
 function getPositionStyle(pos: number) {
   if (pos === 0) return { bg: 'bg-gradient-to-br from-yellow-400 to-amber-500', text: 'text-black', shadow: 'shadow-[0_0_20px_rgba(245,158,11,0.3)]', icon: '1' }
-  if (pos === 1) return { bg: 'bg-gradient-to-br from-gray-300 to-gray-400', text: 'text-black', shadow: 'shadow-[0_0_15px_rgba(156,163,175,0.2)]', icon: '2' }
+  if (pos === 1) return { bg: 'bg-gradient-to-br from-slate-200 to-slate-300', text: 'text-slate-800', shadow: 'shadow-[0_0_15px_rgba(203,213,225,0.3)]', icon: '2' }
   if (pos === 2) return { bg: 'bg-gradient-to-br from-amber-600 to-amber-700', text: 'text-white', shadow: 'shadow-[0_0_15px_rgba(217,119,6,0.2)]', icon: '3' }
   return { bg: 'bg-gradient-to-br from-purple-500/50 to-cyan-500/50', text: 'text-white', shadow: '', icon: String(pos + 1) }
 }

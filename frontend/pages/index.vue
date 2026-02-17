@@ -134,7 +134,10 @@ useHead({
         </div>
 
         <div v-else class="glass-card p-10 text-center">
-          <p class="text-gray-500">Hali reyting ma'lumotlari yo'q</p>
+          <svg class="mx-auto mb-3 text-gray-600" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <p class="text-gray-500 text-sm">Hali reyting ma'lumotlari yo'q</p>
         </div>
       </div>
     </section>
@@ -180,11 +183,16 @@ useHead({
 
         <!-- Empty state -->
         <div v-else class="glass-card p-16 text-center">
-          <svg class="mx-auto mb-4 text-gray-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-          <p class="text-lg text-gray-400 mb-2">Aksiyalar topilmadi</p>
-          <p class="text-sm text-gray-600">Boshqa kategoriyani tanlang yoki qidiruv so'zini o'zgartiring</p>
+          <div
+            class="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center"
+            style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(0,212,255,0.1) 100%)"
+          >
+            <svg class="text-purple-400" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <p class="text-lg text-gray-300 mb-2 font-medium">Aksiyalar topilmadi</p>
+          <p class="text-sm text-gray-500">Boshqa kategoriyani tanlang yoki qidiruv so'zini o'zgartiring</p>
         </div>
       </div>
     </section>
@@ -220,7 +228,10 @@ useHead({
         </div>
 
         <div v-else class="glass-card p-10 text-center">
-          <p class="text-gray-500">Hali do'konlar ma'lumotlari yo'q</p>
+          <svg class="mx-auto mb-3 text-gray-600" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 3h18l-2 13H5L3 3zm0 0l-1-1M7 16v5M17 16v5M2 21h20"/>
+          </svg>
+          <p class="text-gray-500 text-sm">Hali do'konlar ma'lumotlari yo'q</p>
         </div>
       </div>
     </section>

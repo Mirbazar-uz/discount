@@ -80,11 +80,18 @@ useHead({
 
       <!-- Empty -->
       <div v-else class="glass-card p-16 text-center">
-        <svg class="mx-auto mb-4 text-gray-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
-        </svg>
-        <p class="text-lg text-gray-400 mb-2">Bu do'konda aksiyalar topilmadi</p>
-        <NuxtLink to="/" class="text-purple-400 hover:text-cyan-400 text-sm transition-colors">
+        <div
+          class="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center"
+          style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(0,212,255,0.1) 100%)"
+        >
+          <svg class="text-purple-400" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+        </div>
+        <p class="text-lg text-gray-300 mb-2 font-medium">Hozircha bu do'konda aksiyalar yo'q</p>
+        <p class="text-sm text-gray-500 mb-6">Tez orada yangi aksiyalar qo'shiladi</p>
+        <NuxtLink to="/" class="inline-flex items-center gap-2 text-purple-400 hover:text-cyan-400 text-sm transition-colors font-medium">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
           Bosh sahifaga qaytish
         </NuxtLink>
       </div>

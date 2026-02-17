@@ -49,8 +49,9 @@
             <li><NuxtLink to="/store/texnomart" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Texnomart</NuxtLink></li>
             <li><NuxtLink to="/store/asaxiy" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Asaxiy</NuxtLink></li>
             <li><NuxtLink to="/store/mediapark" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Mediapark</NuxtLink></li>
+            <li><NuxtLink to="/store/uzum" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Uzum Market</NuxtLink></li>
+            <li><NuxtLink to="/store/sello" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Sello</NuxtLink></li>
             <li><NuxtLink to="/store/korzinka" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Korzinka</NuxtLink></li>
-            <li><NuxtLink to="/store/makro" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Makro</NuxtLink></li>
           </ul>
         </div>
 
@@ -59,9 +60,10 @@
           <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Kategoriyalar</h4>
           <ul class="list-none space-y-3">
             <li><NuxtLink to="/category/electronics" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Elektronika</NuxtLink></li>
-            <li><NuxtLink to="/category/appliances" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Maishiy texnika</NuxtLink></li>
+            <li><NuxtLink to="/category/marketplace" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Marketplace</NuxtLink></li>
             <li><NuxtLink to="/category/grocery" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Oziq-ovqat</NuxtLink></li>
             <li><NuxtLink to="/category/fashion" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Kiyim-kechak</NuxtLink></li>
+            <li><NuxtLink to="/category/phones" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Telefonlar</NuxtLink></li>
           </ul>
         </div>
 

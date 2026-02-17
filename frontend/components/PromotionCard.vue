@@ -47,12 +47,13 @@ function formatPrice(price: number): string {
       />
       <div
         v-else
-        class="w-full h-full flex items-center justify-center"
-        style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(0,212,255,0.1) 100%)"
+        class="w-full h-full flex flex-col items-center justify-center gap-2"
+        style="background: linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(0,212,255,0.06) 100%)"
       >
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5">
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
         </svg>
+        <span class="text-[10px] text-gray-600">Rasm yo'q</span>
       </div>
 
       <!-- Gradient overlay -->

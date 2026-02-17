@@ -17,6 +17,8 @@ const categoryNames: Record<string, string> = {
   electronics: 'Elektronika',
   grocery: 'Oziq-ovqat',
   fashion: 'Kiyim-kechak',
+  marketplace: 'Marketplace',
+  phones: 'Telefonlar',
   other: 'Boshqa',
 }
 
@@ -82,11 +84,18 @@ useHead({
 
       <!-- Empty -->
       <div v-else class="glass-card p-16 text-center">
-        <svg class="mx-auto mb-4 text-gray-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        <p class="text-lg text-gray-400 mb-2">Bu kategoriyada aksiyalar topilmadi</p>
-        <NuxtLink to="/" class="text-purple-400 hover:text-cyan-400 text-sm transition-colors">
+        <div
+          class="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center"
+          style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(0,212,255,0.1) 100%)"
+        >
+          <svg class="text-purple-400" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <p class="text-lg text-gray-300 mb-2 font-medium">Bu kategoriyada aksiyalar topilmadi</p>
+        <p class="text-sm text-gray-500 mb-6">Boshqa kategoriyalarni ko'rib chiqing</p>
+        <NuxtLink to="/" class="inline-flex items-center gap-2 text-purple-400 hover:text-cyan-400 text-sm transition-colors font-medium">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
           Bosh sahifaga qaytish
         </NuxtLink>
       </div>

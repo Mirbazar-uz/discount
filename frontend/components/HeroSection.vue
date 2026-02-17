@@ -92,7 +92,7 @@ watch(() => props.maxDiscount, (val) => {
             <span>{{ totalPromotions }} ta aktiv aksiya</span>
           </div>
 
-          <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight" style="line-height: 1.05">
+          <h1 class="text-4xl md:text-5xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight" style="line-height: 1.05">
             <span class="gradient-text">Barcha</span>
             <br />
             <span class="gradient-text">chegirmalar</span>
@@ -100,7 +100,7 @@ watch(() => props.maxDiscount, (val) => {
             <span class="text-white">bir joyda</span>
           </h1>
 
-          <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-lg leading-relaxed">
+          <p class="text-base md:text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
             O'zbekistondagi eng yaxshi aksiyalarni o'tkazib yubormang!
             Texnomart, Asaxiy, Mediapark va boshqa do'konlar.
           </p>
