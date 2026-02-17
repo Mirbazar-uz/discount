@@ -3,25 +3,60 @@ from typing import Dict, List, Tuple
 from pathlib import Path
 from datetime import datetime
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
 COLORS = {
-    "background": "#0f0f23",
-    "card_bg": "#1a1a3e",
+    "bg": "#0a0a1a",
+    "card": "#12122a",
+    "card_border": "#1e1e45",
     "white": "#ffffff",
-    "gray": "#9ca3af",
-    "green": "#10b981",
+    "light": "#e2e8f0",
+    "gray": "#94a3b8",
+    "dark_gray": "#64748b",
+    "green": "#22c55e",
+    "green_bg": "#052e16",
     "red": "#ef4444",
-    "orange": "#f97316",
-    "gradient_start": "#7c3aed",
-    "gradient_end": "#00d4ff",
+    "red_bg": "#450a0a",
+    "orange": "#f59e0b",
+    "orange_bg": "#451a03",
+    "purple": "#a855f7",
+    "purple_bg": "#2e1065",
+    "cyan": "#06b6d4",
+    "accent": "#7c3aed",
+    "accent2": "#06b6d4",
 }
 
 
-def _hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
-    hex_color = hex_color.lstrip("#")
-    return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
+def _hex(color: str) -> Tuple[int, int, int]:
+    c = color.lstrip("#")
+    return tuple(int(c[i : i + 2], 16) for i in (0, 2, 4))
+
+
+def _hex_a(color: str, alpha: int) -> Tuple[int, int, int, int]:
+    c = color.lstrip("#")
+    return tuple([int(c[i : i + 2], 16) for i in (0, 2, 4)] + [alpha])
+
+
+def _price(n: float) -> str:
+    return f"{n:,.0f}".replace(",", " ")
+
+
+def _safe_filename(name: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9_-]", "_", name)
+
+
+def _draw_gradient_bar(draw: ImageDraw, x: int, y: int, w: int, h: int, r: int):
+    left = _hex(COLORS["accent"])
+    right = _hex(COLORS["accent2"])
+    for i in range(w):
+        ratio = i / max(w - 1, 1)
+        c = tuple(int(left[j] + (right[j] - left[j]) * ratio) for j in range(3))
+        if i < r or i > w - r:
+            draw.line([(x + i, y + 1), (x + i, y + h - 2)], fill=c)
+        else:
+            draw.line([(x + i, y), (x + i, y + h - 1)], fill=c)
 
 
 class ImageGenerator:
@@ -31,10 +66,15 @@ class ImageGenerator:
         self.output_path = Path("generated_images")
         self.output_path.mkdir(exist_ok=True)
 
-        self.font_bold = self._load_font("Inter-Bold.ttf", 48)
-        self.font_regular = self._load_font("Inter-Regular.ttf", 32)
-        self.font_small = self._load_font("Inter-Regular.ttf", 24)
-        self.font_large = self._load_font("Inter-Bold.ttf", 72)
+        self.f_hero = self._load_font("Inter-Bold.ttf", 96)
+        self.f_title = self._load_font("Inter-Bold.ttf", 64)
+        self.f_subtitle = self._load_font("Inter-Bold.ttf", 52)
+        self.f_price = self._load_font("Inter-Bold.ttf", 88)
+        self.f_body = self._load_font("Inter-Bold.ttf", 42)
+        self.f_label = self._load_font("Inter-Regular.ttf", 36)
+        self.f_small = self._load_font("Inter-Regular.ttf", 32)
+        self.f_brand = self._load_font("Inter-Bold.ttf", 56)
+        self.f_tag = self._load_font("Inter-Bold.ttf", 44)
 
     def _load_font(self, name: str, size: int) -> ImageFont.FreeTypeFont:
         font_path = self.fonts_path / name
@@ -44,142 +84,189 @@ class ImageGenerator:
             return ImageFont.load_default()
 
     def create_promotion_image(self, data: Dict) -> str:
-        width, height = 1080, 1350
-
-        img = Image.new("RGB", (width, height), _hex_to_rgb(COLORS["background"]))
+        W, H = 1080, 1350
+        img = Image.new("RGBA", (W, H), _hex(COLORS["bg"]))
         draw = ImageDraw.Draw(img)
 
-        card_margin = 40
-        card_top = 200
-        card_height = 800
-        draw.rounded_rectangle(
-            (card_margin, card_top, width - card_margin, card_top + card_height),
-            radius=30,
-            fill=_hex_to_rgb(COLORS["card_bg"]),
-        )
+        _draw_gradient_bar(draw, 0, 0, W, 8, 0)
 
+        store_name = data.get("store", "").upper()
         discount_text = data.get(
             "discount_text", f"-{data.get('discount_percent', 0)}%"
         )
-        badge_width = 200
-        badge_height = 80
-        badge_x = width - card_margin - badge_width - 20
-        badge_y = card_top + 20
 
-        draw.rounded_rectangle(
-            (badge_x, badge_y, badge_x + badge_width, badge_y + badge_height),
-            radius=40,
-            fill=_hex_to_rgb(COLORS["red"]),
-        )
+        y = 50
+        draw.text((60, y), store_name, font=self.f_body, fill=_hex(COLORS["gray"]))
+        y += 70
 
-        draw.text(
-            (badge_x + badge_width // 2, badge_y + badge_height // 2),
-            discount_text,
-            font=self.font_bold,
-            fill=_hex_to_rgb(COLORS["white"]),
-            anchor="mm",
-        )
-
-        store_name = data.get("store", "").upper()
-        draw.text(
-            (card_margin + 30, card_top + 40),
-            store_name,
-            font=self.font_regular,
-            fill=_hex_to_rgb(COLORS["gray"]),
-        )
+        _draw_gradient_bar(draw, 60, y, 120, 6, 3)
+        y += 40
 
         title = data.get("title", "Aksiya")
-        title_lines = self._wrap_text(title, self.font_bold, width - 2 * card_margin - 60)
-        y_offset = card_top + 150
-        for line in title_lines[:2]:
-            draw.text(
-                (card_margin + 30, y_offset),
-                line,
-                font=self.font_bold,
-                fill=_hex_to_rgb(COLORS["white"]),
-            )
-            y_offset += 60
+        lines = self._wrap_text(title, self.f_title, W - 120)
+        for line in lines[:3]:
+            draw.text((60, y), line, font=self.f_title, fill=_hex(COLORS["white"]))
+            y += 80
+        y += 30
 
-        y_offset += 50
-        if data.get("old_price"):
-            old_price_text = f"{data['old_price']:,.0f} so'm".replace(",", " ")
+        badge_w = min(len(discount_text) * 48 + 60, 500)
+        badge_h = 100
+        draw.rounded_rectangle(
+            (60, y, 60 + badge_w, y + badge_h),
+            radius=50,
+            fill=_hex(COLORS["red_bg"]),
+        )
+        draw.rounded_rectangle(
+            (60, y, 60 + badge_w, y + badge_h),
+            radius=50,
+            outline=_hex(COLORS["red"]),
+            width=3,
+        )
+        draw.text(
+            (60 + badge_w // 2, y + badge_h // 2),
+            discount_text,
+            font=self.f_subtitle,
+            fill=_hex(COLORS["red"]),
+            anchor="mm",
+        )
+        y += badge_h + 50
+
+        card_top = y
+        card_bottom = card_top + 380
+        draw.rounded_rectangle(
+            (40, card_top, W - 40, card_bottom),
+            radius=30,
+            fill=_hex(COLORS["card"]),
+            outline=_hex(COLORS["card_border"]),
+            width=2,
+        )
+
+        py = card_top + 40
+
+        if data.get("old_price") and data.get("new_price"):
             draw.text(
-                (card_margin + 30, y_offset),
-                old_price_text,
-                font=self.font_regular,
-                fill=_hex_to_rgb(COLORS["gray"]),
+                (80, py),
+                "OLDINGI NARX",
+                font=self.f_small,
+                fill=_hex(COLORS["dark_gray"]),
             )
-            bbox = draw.textbbox(
-                (card_margin + 30, y_offset), old_price_text, font=self.font_regular
+            py += 44
+            old_text = f"{_price(data['old_price'])} so'm"
+            draw.text(
+                (80, py), old_text, font=self.f_body, fill=_hex(COLORS["dark_gray"])
             )
+            bbox = draw.textbbox((80, py), old_text, font=self.f_body)
             draw.line(
-                [(bbox[0], bbox[1] + 20), (bbox[2], bbox[1] + 20)],
-                fill=_hex_to_rgb(COLORS["gray"]),
-                width=2,
+                [(bbox[0], bbox[1] + 26), (bbox[2], bbox[1] + 26)],
+                fill=_hex(COLORS["red"]),
+                width=4,
             )
-            y_offset += 50
+            py += 70
 
-        if data.get("new_price"):
-            new_price_text = f"{data['new_price']:,.0f} so'm".replace(",", " ")
             draw.text(
-                (card_margin + 30, y_offset),
-                new_price_text,
-                font=self.font_large,
-                fill=_hex_to_rgb(COLORS["green"]),
+                (80, py),
+                "YANGI NARX",
+                font=self.f_small,
+                fill=_hex(COLORS["green"]),
             )
-            y_offset += 100
-
-        if data.get("deadline_text"):
+            py += 44
+            new_text = f"{_price(data['new_price'])} so'm"
             draw.text(
-                (card_margin + 30, y_offset),
-                data["deadline_text"],
-                font=self.font_regular,
-                fill=_hex_to_rgb(COLORS["orange"]),
+                (80, py), new_text, font=self.f_price, fill=_hex(COLORS["green"])
+            )
+            py += 110
+
+            savings = data["old_price"] - data["new_price"]
+            if savings > 0:
+                sav_text = f"Tejamkorlik: {_price(savings)} so'm"
+                sav_w = len(sav_text) * 20 + 40
+                draw.rounded_rectangle(
+                    (80, py, 80 + sav_w, py + 52),
+                    radius=26,
+                    fill=_hex(COLORS["green_bg"]),
+                )
+                draw.text(
+                    (100, py + 8),
+                    sav_text,
+                    font=self.f_small,
+                    fill=_hex(COLORS["green"]),
+                )
+
+        elif data.get("new_price"):
+            draw.text(
+                (80, py), "NARXI", font=self.f_small, fill=_hex(COLORS["cyan"])
+            )
+            py += 44
+            draw.text(
+                (80, py),
+                f"{_price(data['new_price'])} so'm",
+                font=self.f_price,
+                fill=_hex(COLORS["green"]),
             )
 
-        branding_top = card_top + card_height + 50
-
-        draw.text(
-            (width // 2, branding_top),
-            "MIRBAZAR.UZ",
-            font=self.font_bold,
-            fill=_hex_to_rgb(COLORS["white"]),
-            anchor="mm",
-        )
-
-        draw.text(
-            (width // 2, branding_top + 50),
-            "Barcha chegirmalar bir joyda!",
-            font=self.font_regular,
-            fill=_hex_to_rgb(COLORS["gray"]),
-            anchor="mm",
-        )
-
-        cta_y = branding_top + 120
-        cta_texts = [
-            "Kunlik yangi aksiyalar",
-            "Eng arzon narxlar",
-            "Bepul obuna",
-        ]
-        for i, cta in enumerate(cta_texts):
+        else:
             draw.text(
-                (width // 2, cta_y + i * 40),
-                cta,
-                font=self.font_small,
-                fill=_hex_to_rgb(COLORS["gray"]),
+                (W // 2, card_top + 190),
+                "AKSIYA",
+                font=self.f_hero,
+                fill=_hex(COLORS["accent"]),
                 anchor="mm",
             )
 
+        y = card_bottom + 40
+
+        if data.get("deadline_text"):
+            dl_text = data["deadline_text"]
+            dl_w = len(dl_text) * 22 + 80
+            draw.rounded_rectangle(
+                (60, y, 60 + dl_w, y + 64),
+                radius=32,
+                fill=_hex(COLORS["orange_bg"]),
+            )
+            draw.text(
+                (60 + dl_w // 2, y + 32),
+                dl_text,
+                font=self.f_label,
+                fill=_hex(COLORS["orange"]),
+                anchor="mm",
+            )
+            y += 90
+
+        footer_y = H - 260
+        draw.line(
+            [(60, footer_y), (W - 60, footer_y)],
+            fill=_hex(COLORS["card_border"]),
+            width=2,
+        )
+
         draw.text(
-            (width // 2, height - 60),
+            (W // 2, footer_y + 50),
+            "MIRBAZAR.UZ",
+            font=self.f_brand,
+            fill=_hex(COLORS["white"]),
+            anchor="mm",
+        )
+        draw.text(
+            (W // 2, footer_y + 115),
+            "Barcha chegirmalar bir joyda",
+            font=self.f_label,
+            fill=_hex(COLORS["gray"]),
+            anchor="mm",
+        )
+        draw.text(
+            (W // 2, footer_y + 180),
             "@mirbazar_uz",
-            font=self.font_bold,
-            fill=_hex_to_rgb(COLORS["gradient_end"]),
+            font=self.f_tag,
+            fill=_hex(COLORS["cyan"]),
             anchor="mm",
         )
 
-        filename = f"promo_{data.get('store', 'unknown')}_{data.get('id', 'unknown')}.png"
+        _draw_gradient_bar(draw, 0, H - 8, W, 8, 0)
+
+        safe_store = _safe_filename(data.get("store", "unknown"))
+        filename = f"promo_{safe_store}_{data.get('id', 'unknown')}.png"
         filepath = self.output_path / filename
+        img = img.convert("RGB")
         img.save(filepath, "PNG", quality=95)
 
         return str(filepath)
@@ -187,191 +274,230 @@ class ImageGenerator:
     def create_rating_image(
         self, stores_data: List[Dict], period: str = "Haftalik"
     ) -> str:
-        width, height = 1080, 1350
-        img = Image.new("RGB", (width, height), _hex_to_rgb(COLORS["background"]))
+        W, H = 1080, 1350
+        img = Image.new("RGB", (W, H), _hex(COLORS["bg"]))
         draw = ImageDraw.Draw(img)
 
+        _draw_gradient_bar(draw, 0, 0, W, 8, 0)
+
         draw.text(
-            (width // 2, 80),
+            (W // 2, 70),
             f"{period.upper()} REYTING",
-            font=self.font_large,
-            fill=_hex_to_rgb(COLORS["white"]),
+            font=self.f_hero,
+            fill=_hex(COLORS["white"]),
             anchor="mm",
         )
-
         draw.text(
-            (width // 2, 150),
+            (W // 2, 140),
             datetime.now().strftime("%d.%m.%Y"),
-            font=self.font_regular,
-            fill=_hex_to_rgb(COLORS["gray"]),
+            font=self.f_label,
+            fill=_hex(COLORS["gray"]),
             anchor="mm",
         )
 
-        medals = ["1", "2", "3", "4", "5", "6", "7", "8"]
-        y_start = 250
-        row_height = 120
+        y_start = 210
+        row_h = 130
+        max_count = max((s.get("count", 0) for s in stores_data), default=1) or 1
 
-        max_count = (
-            max(s.get("count", 0) for s in stores_data) if stores_data else 1
-        )
+        top_colors = [COLORS["accent"], COLORS["cyan"], COLORS["orange"]]
 
         for i, store in enumerate(stores_data[:8]):
-            y = y_start + i * row_height
-            medal = medals[i] if i < len(medals) else f"{i + 1}"
-
-            draw.text(
-                (60, y + 20),
-                f"{medal}. {store.get('name', '')}",
-                font=self.font_bold,
-                fill=_hex_to_rgb(COLORS["white"]),
-            )
-
-            bar_width = int((store.get("count", 0) / max_count) * 600)
-            bar_x = 60
-            bar_y = y + 70
-            bar_h = 30
+            y = y_start + i * row_h
 
             draw.rounded_rectangle(
-                (bar_x, bar_y, bar_x + 600, bar_y + bar_h),
-                radius=15,
-                fill=_hex_to_rgb("#2d2d5a"),
+                (40, y, W - 40, y + row_h - 12),
+                radius=20,
+                fill=_hex(COLORS["card"]),
             )
 
-            if bar_width > 0:
-                store_color = store.get("color", COLORS["gradient_start"])
+            pos_color = top_colors[i] if i < 3 else COLORS["gray"]
+            draw.text(
+                (80, y + (row_h - 12) // 2),
+                f"{i + 1}",
+                font=self.f_subtitle,
+                fill=_hex(pos_color),
+                anchor="lm",
+            )
+
+            name = store.get("name", "")
+            draw.text(
+                (140, y + 18),
+                name,
+                font=self.f_body,
+                fill=_hex(COLORS["white"]),
+            )
+
+            bar_full = 500
+            bar_w = max(int((store.get("count", 0) / max_count) * bar_full), 8)
+            bar_y = y + 72
+            draw.rounded_rectangle(
+                (140, bar_y, 140 + bar_full, bar_y + 24),
+                radius=12,
+                fill=_hex("#1a1a40"),
+            )
+            if bar_w > 0:
+                c = _hex(pos_color)
                 draw.rounded_rectangle(
-                    (bar_x, bar_y, bar_x + bar_width, bar_y + bar_h),
-                    radius=15,
-                    fill=_hex_to_rgb(store_color),
+                    (140, bar_y, 140 + bar_w, bar_y + 24),
+                    radius=12,
+                    fill=c,
                 )
 
+            count = store.get("count", 0)
             draw.text(
-                (700, y + 50),
-                f"{store.get('count', 0)} aksiya",
-                font=self.font_regular,
-                fill=_hex_to_rgb(COLORS["gray"]),
+                (700, y + 30),
+                f"{count} ta",
+                font=self.f_body,
+                fill=_hex(COLORS["light"]),
             )
 
-            draw.text(
-                (900, y + 50),
-                f"{store.get('max_discount', 0)}%",
-                font=self.font_regular,
-                fill=_hex_to_rgb(COLORS["green"]),
-            )
+            max_disc = store.get("max_discount", 0)
+            if max_disc:
+                draw.text(
+                    (W - 80, y + 30),
+                    f"-{max_disc}%",
+                    font=self.f_body,
+                    fill=_hex(COLORS["green"]),
+                    anchor="ra",
+                )
 
+        footer_y = H - 200
+        draw.line(
+            [(60, footer_y), (W - 60, footer_y)],
+            fill=_hex(COLORS["card_border"]),
+            width=2,
+        )
         draw.text(
-            (width // 2, height - 120),
+            (W // 2, footer_y + 50),
             "MIRBAZAR.UZ",
-            font=self.font_bold,
-            fill=_hex_to_rgb(COLORS["white"]),
+            font=self.f_brand,
+            fill=_hex(COLORS["white"]),
+            anchor="mm",
+        )
+        draw.text(
+            (W // 2, footer_y + 120),
+            "@mirbazar_uz",
+            font=self.f_tag,
+            fill=_hex(COLORS["cyan"]),
             anchor="mm",
         )
 
-        draw.text(
-            (width // 2, height - 60),
-            "@mirbazar_uz",
-            font=self.font_regular,
-            fill=_hex_to_rgb(COLORS["gradient_end"]),
-            anchor="mm",
-        )
+        _draw_gradient_bar(draw, 0, H - 8, W, 8, 0)
 
         filename = f"rating_{period.lower()}_{datetime.now().strftime('%Y%m%d')}.png"
         filepath = self.output_path / filename
         img.save(filepath, "PNG", quality=95)
-
         return str(filepath)
 
     def create_digest_image(
         self, promotions: List[Dict], title: str = "TOP-5 CHEGIRMALAR"
     ) -> str:
-        width, height = 1080, 1350
-        img = Image.new("RGB", (width, height), _hex_to_rgb(COLORS["background"]))
+        W, H = 1080, 1350
+        img = Image.new("RGB", (W, H), _hex(COLORS["bg"]))
         draw = ImageDraw.Draw(img)
 
+        _draw_gradient_bar(draw, 0, 0, W, 8, 0)
+
         draw.text(
-            (width // 2, 80),
+            (W // 2, 80),
             title,
-            font=self.font_large,
-            fill=_hex_to_rgb(COLORS["white"]),
+            font=self.f_hero,
+            fill=_hex(COLORS["white"]),
+            anchor="mm",
+        )
+        draw.text(
+            (W // 2, 150),
+            datetime.now().strftime("%d.%m.%Y"),
+            font=self.f_label,
+            fill=_hex(COLORS["gray"]),
             anchor="mm",
         )
 
-        y_start = 200
-        card_height = 180
-        card_margin = 40
+        y_start = 210
+        card_h = 200
+        margin = 40
+        top_colors = [COLORS["accent"], COLORS["cyan"], COLORS["orange"]]
 
         for i, promo in enumerate(promotions[:5]):
-            y = y_start + i * (card_height + 20)
+            y = y_start + i * (card_h + 16)
 
             draw.rounded_rectangle(
-                (card_margin, y, width - card_margin, y + card_height),
-                radius=20,
-                fill=_hex_to_rgb(COLORS["card_bg"]),
+                (margin, y, W - margin, y + card_h),
+                radius=24,
+                fill=_hex(COLORS["card"]),
             )
 
+            pos_color = top_colors[i] if i < 3 else COLORS["gray"]
             draw.text(
-                (card_margin + 30, y + 30),
-                f"{i + 1}.",
-                font=self.font_bold,
-                fill=_hex_to_rgb(COLORS["white"]),
+                (margin + 35, y + card_h // 2),
+                f"{i + 1}",
+                font=self.f_subtitle,
+                fill=_hex(pos_color),
+                anchor="lm",
             )
 
             discount = promo.get(
                 "discount_text", f"-{promo.get('discount_percent', 0)}%"
             )
             draw.text(
-                (width - card_margin - 30, y + 30),
+                (W - margin - 30, y + 30),
                 discount,
-                font=self.font_bold,
-                fill=_hex_to_rgb(COLORS["red"]),
+                font=self.f_subtitle,
+                fill=_hex(COLORS["red"]),
                 anchor="ra",
             )
 
-            title_text = promo.get("title", "")[:40]
+            title_text = promo.get("title", "")[:45]
             draw.text(
-                (card_margin + 100, y + 35),
+                (margin + 100, y + 25),
                 title_text,
-                font=self.font_regular,
-                fill=_hex_to_rgb(COLORS["white"]),
+                font=self.f_body,
+                fill=_hex(COLORS["white"]),
             )
 
             store = promo.get("store", "")
             draw.text(
-                (card_margin + 100, y + 85),
+                (margin + 100, y + 80),
                 store,
-                font=self.font_small,
-                fill=_hex_to_rgb(COLORS["gray"]),
+                font=self.f_label,
+                fill=_hex(COLORS["gray"]),
             )
 
             if promo.get("new_price"):
-                price_text = f"{promo['new_price']:,.0f} so'm".replace(",", " ")
+                price_text = f"{_price(promo['new_price'])} so'm"
                 draw.text(
-                    (card_margin + 100, y + 125),
+                    (margin + 100, y + 130),
                     price_text,
-                    font=self.font_regular,
-                    fill=_hex_to_rgb(COLORS["green"]),
+                    font=self.f_body,
+                    fill=_hex(COLORS["green"]),
                 )
 
+        footer_y = H - 200
+        draw.line(
+            [(60, footer_y), (W - 60, footer_y)],
+            fill=_hex(COLORS["card_border"]),
+            width=2,
+        )
         draw.text(
-            (width // 2, height - 120),
+            (W // 2, footer_y + 50),
             "MIRBAZAR.UZ",
-            font=self.font_bold,
-            fill=_hex_to_rgb(COLORS["white"]),
+            font=self.f_brand,
+            fill=_hex(COLORS["white"]),
+            anchor="mm",
+        )
+        draw.text(
+            (W // 2, footer_y + 120),
+            "@mirbazar_uz",
+            font=self.f_tag,
+            fill=_hex(COLORS["cyan"]),
             anchor="mm",
         )
 
-        draw.text(
-            (width // 2, height - 60),
-            "@mirbazar_uz",
-            font=self.font_regular,
-            fill=_hex_to_rgb(COLORS["gradient_end"]),
-            anchor="mm",
-        )
+        _draw_gradient_bar(draw, 0, H - 8, W, 8, 0)
 
         filename = f"digest_{datetime.now().strftime('%Y%m%d_%H%M')}.png"
         filepath = self.output_path / filename
         img.save(filepath, "PNG", quality=95)
-
         return str(filepath)
 
     def _wrap_text(self, text: str, font: ImageFont, max_width: int) -> List[str]:
