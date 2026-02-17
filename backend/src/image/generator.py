@@ -138,7 +138,7 @@ class ImageGenerator:
         )
 
     def _best_disc_font(self, d, disc: str, w: int):
-        max_w = w - 160
+        max_w = w - 180
         for key, lh in [("mega", 170), ("hero", 100), ("disc2", 85)]:
             font = self.f[key]
             lines = self._wrap(disc, font, max_w)
@@ -174,13 +174,15 @@ class ImageGenerator:
             disc_lines = ["AKSIYA"]
             disc_lh = 110
 
+        # Calculate banner height
+        banner_pad = 40
+        banner_h = max(disc_lh * len(disc_lines) + banner_pad * 2, 220)
+
         # Vertical centering
         h_est = 0
         if store:
             h_est += 80
-        h_est += 50  # separator + gap
-        h_est += disc_lh * len(disc_lines) + 20
-        h_est += 50  # separator + gap
+        h_est += banner_h + 30
         h_est += len(title_lines) * 75 + 40
         if old_p and new_p:
             h_est += 300
@@ -205,31 +207,24 @@ class ImageGenerator:
                 (W // 2, y + 25), store,
                 font=self.f["store"], fill=_rgb(self.LT), anchor="mm",
             )
-            y += 70
+            y += 80
 
-        # ─ Separator ─
-        self._sep(d, y + 5, W)
-        y += 30
+        # ─ Discount Banner ─
+        banner_color = self.RD if disc else self.PR
+        d.rounded_rectangle(
+            [60, y, W - 60, y + banner_h], radius=20,
+            fill=_rgb(banner_color),
+        )
 
-        # ─ Discount ─
-        if disc:
-            for line in disc_lines:
-                d.text(
-                    (W // 2, y + disc_lh // 2), line,
-                    font=disc_font, fill=_rgb(self.RD), anchor="mm",
-                )
-                y += disc_lh
-        else:
+        text_y = y + (banner_h - disc_lh * len(disc_lines)) // 2
+        for line in disc_lines:
             d.text(
-                (W // 2, y + 55), "AKSIYA",
-                font=self.f["hero"], fill=_rgb(self.PR), anchor="mm",
+                (W // 2, text_y + disc_lh // 2), line,
+                font=disc_font, fill=_rgb(self.WH), anchor="mm",
             )
-            y += 110
-        y += 20
+            text_y += disc_lh
 
-        # ─ Separator ─
-        self._sep(d, y + 5, W)
-        y += 30
+        y += banner_h + 30
 
         # ─ Title ─
         for line in title_lines:
