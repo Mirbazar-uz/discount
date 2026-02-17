@@ -229,6 +229,54 @@ class MirbazarApp:
         finally:
             db.close()
 
+    async def regenerate_missing_images(self):
+        logger.info("Rasmsiz e'lonlarga rasm generatsiya qilinmoqda...")
+
+        db = self._get_db_session()
+        try:
+            from .database.models import Promotion, PromotionImage, PromotionStatus
+
+            promos_without_images = (
+                db.query(Promotion)
+                .outerjoin(PromotionImage)
+                .filter(
+                    Promotion.status == PromotionStatus.ACTIVE,
+                    Promotion.image_url.is_(None),
+                    PromotionImage.id.is_(None),
+                )
+                .all()
+            )
+
+            count = 0
+            promo_crud = PromotionCRUD(db)
+
+            for promo in promos_without_images:
+                try:
+                    image_data = {
+                        "title": promo.title,
+                        "store": promo.store.name if promo.store else "",
+                        "old_price": promo.old_price,
+                        "new_price": promo.new_price,
+                        "discount_text": promo.discount_text,
+                        "discount_percent": promo.discount_percent,
+                        "deadline_text": promo.deadline_text,
+                        "id": promo.id,
+                    }
+                    image_path = self.image_gen.create_promotion_image(image_data)
+                    promo_crud.update_image_path(promo.id, image_path)
+
+                    filename = Path(image_path).name
+                    promo_crud.update_display_image(
+                        promo.id, f"/images/{filename}"
+                    )
+                    count += 1
+                except Exception as e:
+                    logger.error("Rasm generatsiya xatosi (id=%s): %s", promo.id, e)
+
+            logger.info("Jami %d ta e'longa rasm yaratildi", count)
+        finally:
+            db.close()
+
     async def cleanup_expired_promotions(self):
         logger.info("Tozalash...")
 
