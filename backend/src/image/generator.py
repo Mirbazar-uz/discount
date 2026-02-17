@@ -68,7 +68,8 @@ class ImageGenerator:
         self.f = {
             "mega":  self._font("Inter-Bold.ttf", 160),
             "hero":  self._font("Inter-Bold.ttf", 84),
-            "title": self._font("Inter-Bold.ttf", 50),
+            "disc2": self._font("Inter-Bold.ttf", 72),
+            "title": self._font("Inter-Bold.ttf", 60),
             "price": self._font("Inter-Bold.ttf", 70),
             "old":   self._font("Inter-Bold.ttf", 40),
             "sub":   self._font("Inter-Bold.ttf", 44),
@@ -76,7 +77,7 @@ class ImageGenerator:
             "label": self._font("Inter-Regular.ttf", 30),
             "small": self._font("Inter-Regular.ttf", 26),
             "brand": self._font("Inter-Bold.ttf", 42),
-            "store": self._font("Inter-Bold.ttf", 32),
+            "store": self._font("Inter-Bold.ttf", 34),
             "tag":   self._font("Inter-Bold.ttf", 34),
             "pos":   self._font("Inter-Bold.ttf", 48),
         }
@@ -107,9 +108,9 @@ class ImageGenerator:
     def _glow_circles(self, img: Image.Image):
         ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
         d = ImageDraw.Draw(ov)
-        d.ellipse([680, -100, 1300, 520], fill=_rgba(self.RD, 14))
-        d.ellipse([-150, 600, 450, 1200], fill=_rgba(self.BL, 11))
-        d.ellipse([700, 950, 1250, 1500], fill=_rgba(self.PR, 9))
+        d.ellipse([820, 0, 1150, 330], fill=_rgba(self.RD, 8))
+        d.ellipse([-60, 800, 260, 1120], fill=_rgba(self.BL, 7))
+        d.ellipse([830, 1050, 1130, 1350], fill=_rgba(self.PR, 6))
         img.alpha_composite(ov)
 
     def _accent(self, d, y: int, w: int, h: int = 5):
@@ -132,22 +133,6 @@ class ImageGenerator:
             font=self.f["small"], fill=_rgb(self.MT), anchor="mm",
         )
 
-    def _sparkles(self, d, cx: int, cy: int):
-        color = _rgb(self.RD)
-        pts = [
-            (cx - 250, cy - 80, 5),
-            (cx + 260, cy + 70, 6),
-            (cx - 200, cy + 90, 4),
-            (cx + 210, cy - 85, 4),
-            (cx - 280, cy + 10, 3),
-            (cx + 280, cy - 5, 3),
-        ]
-        for px, py, sz in pts:
-            d.polygon([
-                (px, py - sz), (px + sz, py),
-                (px, py + sz), (px - sz, py),
-            ], fill=color)
-
     # ── Promotion Image ──────────────────────────────────
 
     def create_promotion_image(self, data: Dict) -> str:
@@ -158,67 +143,100 @@ class ImageGenerator:
         d = ImageDraw.Draw(img)
         self._accent(d, 0, W)
 
-        y = 55
-
         store = data.get("store", "").upper()
-        if store:
-            sw = self._tw(d, store, self.f["store"]) + 44
-            sx = (W - sw) // 2
-            d.rounded_rectangle(
-                [sx, y, sx + sw, y + 48], radius=24,
-                fill=_rgb(self.PILL), outline=_rgb(self.PILL_BD), width=1,
-            )
-            d.text(
-                (W // 2, y + 24), store,
-                font=self.f["store"], fill=_rgb(self.LT), anchor="mm",
-            )
-            y += 85
-
         disc = data.get("discount_text", "")
         pct = data.get("discount_percent")
         if not disc and pct:
             disc = f"-{pct}%"
+        title = data.get("title", "Aksiya")
+        old_p, new_p = data.get("old_price"), data.get("new_price")
+        dl = data.get("deadline_text")
 
+        # Estimate content height for vertical centering
+        h_est = 0
+        if store:
+            h_est += 70
+        h_est += 220  # discount or aksiya
+        title_lines = self._wrap(title, self.f["title"], W - 140)[:3]
+        h_est += len(title_lines) * 75 + 40
+        if old_p and new_p:
+            h_est += 300
+        elif new_p:
+            h_est += 150
+        if dl:
+            h_est += 70
+
+        area_top = 50
+        area_bot = H - 170
+        y = area_top + max((area_bot - area_top - h_est) // 2, 0)
+
+        # ─ Store pill ─
+        if store:
+            sw = self._tw(d, store, self.f["store"]) + 48
+            sx = (W - sw) // 2
+            d.rounded_rectangle(
+                [sx, y, sx + sw, y + 50], radius=25,
+                fill=_rgb(self.PILL), outline=_rgb(self.PILL_BD), width=1,
+            )
+            d.text(
+                (W // 2, y + 25), store,
+                font=self.f["store"], fill=_rgb(self.LT), anchor="mm",
+            )
+            y += 70
+
+        # ─ Discount HERO ─
         if disc:
-            hero_cy = y + 105
+            # Choose font: mega for short, disc2 for long (wrap to 2 lines)
+            if self._tw(d, disc, self.f["mega"]) <= W - 160:
+                disc_font = self.f["mega"]
+                disc_lines = [disc]
+                line_h = 170
+            else:
+                disc_font = self.f["disc2"]
+                disc_lines = self._wrap(disc, disc_font, W - 160)[:2]
+                line_h = 85
 
-            disc_font = self.f["mega"]
-            if self._tw(d, disc, disc_font) > W - 100:
-                disc_font = self.f["hero"]
+            disc_block_h = line_h * len(disc_lines)
+            disc_center_y = y + disc_block_h // 2
 
+            # Red glow behind discount
             glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
             gd = ImageDraw.Draw(glow)
+            glow_rx, glow_ry = 200, min(disc_block_h // 2 + 40, 140)
             gd.ellipse(
-                [W // 2 - 260, hero_cy - 120, W // 2 + 260, hero_cy + 120],
-                fill=_rgba(self.RD, 28),
+                [W // 2 - glow_rx, disc_center_y - glow_ry,
+                 W // 2 + glow_rx, disc_center_y + glow_ry],
+                fill=_rgba(self.RD, 22),
             )
             img.alpha_composite(glow)
             d = ImageDraw.Draw(img)
 
-            d.text(
-                (W // 2, hero_cy), disc,
-                font=disc_font, fill=_rgb(self.RD), anchor="mm",
-            )
-            self._sparkles(d, W // 2, hero_cy)
-            y += 230
+            ly = y
+            for line in disc_lines:
+                d.text(
+                    (W // 2, ly + line_h // 2), line,
+                    font=disc_font, fill=_rgb(self.RD), anchor="mm",
+                )
+                ly += line_h
+
+            y += disc_block_h + 30
         else:
             d.text(
-                (W // 2, y + 85), "AKSIYA",
+                (W // 2, y + 80), "AKSIYA",
                 font=self.f["hero"], fill=_rgb(self.PR), anchor="mm",
             )
             y += 190
 
-        title = data.get("title", "Aksiya")
-        for line in self._wrap(title, self.f["title"], W - 130)[:3]:
+        # ─ Title ─
+        for line in title_lines:
             d.text(
-                (W // 2, y), line,
+                (W // 2, y + 37), line,
                 font=self.f["title"], fill=_rgb(self.WH), anchor="mm",
             )
-            y += 62
-        y += 30
+            y += 75
+        y += 40
 
-        old_p, new_p = data.get("old_price"), data.get("new_price")
-
+        # ─ Price card ─
         if old_p and new_p:
             ch = 290
             ct = y
@@ -284,7 +302,7 @@ class ImageGenerator:
             )
             y = ct + ch + 28
 
-        dl = data.get("deadline_text")
+        # ─ Deadline ─
         if dl:
             dw = self._tw(d, dl, self.f["label"]) + 44
             dx = (W - dw) // 2
