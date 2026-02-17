@@ -13,11 +13,6 @@ def _rgb(c: str) -> Tuple[int, int, int]:
     return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
 
 
-def _rgba(c: str, a: int) -> Tuple[int, int, int, int]:
-    r, g, b = _rgb(c)
-    return (r, g, b, a)
-
-
 def _fmt(n) -> str:
     try:
         return f"{float(n):,.0f}".replace(",", " ")
@@ -78,7 +73,6 @@ class ImageGenerator:
             "small": self._font("Inter-Regular.ttf", 26),
             "brand": self._font("Inter-Bold.ttf", 42),
             "store": self._font("Inter-Bold.ttf", 34),
-            "tag":   self._font("Inter-Bold.ttf", 34),
             "pos":   self._font("Inter-Bold.ttf", 48),
         }
 
@@ -105,20 +99,30 @@ class ImageGenerator:
             d.line([(0, y), (w, y)], fill=c)
         return img
 
-    def _glow_circles(self, img: Image.Image):
-        ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
-        d = ImageDraw.Draw(ov)
-        d.ellipse([820, 0, 1150, 330], fill=_rgba(self.RD, 8))
-        d.ellipse([-60, 800, 260, 1120], fill=_rgba(self.BL, 7))
-        d.ellipse([830, 1050, 1130, 1350], fill=_rgba(self.PR, 6))
-        img.alpha_composite(ov)
-
     def _accent(self, d, y: int, w: int, h: int = 5):
         a, b = _rgb(self.RD), _rgb(self.BL)
         for x in range(w):
             t = x / max(w - 1, 1)
             c = tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
             d.line([(x, y), (x, y + h - 1)], fill=c)
+
+    def _sep(self, d, y: int, w: int):
+        d.line(
+            [(w // 2 - 80, y), (w // 2 + 80, y)],
+            fill=_rgb(self.EDGE), width=1,
+        )
+
+    def _corners(self, d, w: int, h: int):
+        c = _rgb(self.EDGE)
+        s, m = 25, 16
+        d.line([(m, m), (m, m + s)], fill=c, width=2)
+        d.line([(m, m), (m + s, m)], fill=c, width=2)
+        d.line([(w - m, m), (w - m, m + s)], fill=c, width=2)
+        d.line([(w - m, m), (w - m - s, m)], fill=c, width=2)
+        d.line([(m, h - m), (m, h - m - s)], fill=c, width=2)
+        d.line([(m, h - m), (m + s, h - m)], fill=c, width=2)
+        d.line([(w - m, h - m), (w - m, h - m - s)], fill=c, width=2)
+        d.line([(w - m, h - m), (w - m - s, h - m)], fill=c, width=2)
 
     def _footer(self, d, w: int, h: int):
         fy = h - 150
@@ -133,15 +137,24 @@ class ImageGenerator:
             font=self.f["small"], fill=_rgb(self.MT), anchor="mm",
         )
 
+    def _best_disc_font(self, d, disc: str, w: int):
+        max_w = w - 160
+        for key, lh in [("mega", 170), ("hero", 100), ("disc2", 85)]:
+            font = self.f[key]
+            lines = self._wrap(disc, font, max_w)
+            if len(lines) <= 2:
+                return font, lines, lh
+        return self.f["disc2"], self._wrap(disc, self.f["disc2"], max_w)[:2], 85
+
     # ── Promotion Image ──────────────────────────────────
 
     def create_promotion_image(self, data: Dict) -> str:
         W, H = 1080, 1350
-
-        img = self._bg(W, H).convert("RGBA")
-        self._glow_circles(img)
+        img = self._bg(W, H)
         d = ImageDraw.Draw(img)
+
         self._accent(d, 0, W)
+        self._corners(d, W, H)
 
         store = data.get("store", "").upper()
         disc = data.get("discount_text", "")
@@ -152,17 +165,27 @@ class ImageGenerator:
         old_p, new_p = data.get("old_price"), data.get("new_price")
         dl = data.get("deadline_text")
 
-        # Estimate content height for vertical centering
+        title_lines = self._wrap(title, self.f["title"], W - 140)[:3]
+
+        if disc:
+            disc_font, disc_lines, disc_lh = self._best_disc_font(d, disc, W)
+        else:
+            disc_font = self.f["hero"]
+            disc_lines = ["AKSIYA"]
+            disc_lh = 110
+
+        # Vertical centering
         h_est = 0
         if store:
-            h_est += 70
-        h_est += 220  # discount or aksiya
-        title_lines = self._wrap(title, self.f["title"], W - 140)[:3]
+            h_est += 80
+        h_est += 50  # separator + gap
+        h_est += disc_lh * len(disc_lines) + 20
+        h_est += 50  # separator + gap
         h_est += len(title_lines) * 75 + 40
         if old_p and new_p:
             h_est += 300
         elif new_p:
-            h_est += 150
+            h_est += 160
         if dl:
             h_est += 70
 
@@ -184,48 +207,29 @@ class ImageGenerator:
             )
             y += 70
 
-        # ─ Discount HERO ─
+        # ─ Separator ─
+        self._sep(d, y + 5, W)
+        y += 30
+
+        # ─ Discount ─
         if disc:
-            # Choose font: mega for short, disc2 for long (wrap to 2 lines)
-            if self._tw(d, disc, self.f["mega"]) <= W - 160:
-                disc_font = self.f["mega"]
-                disc_lines = [disc]
-                line_h = 170
-            else:
-                disc_font = self.f["disc2"]
-                disc_lines = self._wrap(disc, disc_font, W - 160)[:2]
-                line_h = 85
-
-            disc_block_h = line_h * len(disc_lines)
-            disc_center_y = y + disc_block_h // 2
-
-            # Red glow behind discount
-            glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-            gd = ImageDraw.Draw(glow)
-            glow_rx, glow_ry = 200, min(disc_block_h // 2 + 40, 140)
-            gd.ellipse(
-                [W // 2 - glow_rx, disc_center_y - glow_ry,
-                 W // 2 + glow_rx, disc_center_y + glow_ry],
-                fill=_rgba(self.RD, 22),
-            )
-            img.alpha_composite(glow)
-            d = ImageDraw.Draw(img)
-
-            ly = y
             for line in disc_lines:
                 d.text(
-                    (W // 2, ly + line_h // 2), line,
+                    (W // 2, y + disc_lh // 2), line,
                     font=disc_font, fill=_rgb(self.RD), anchor="mm",
                 )
-                ly += line_h
-
-            y += disc_block_h + 30
+                y += disc_lh
         else:
             d.text(
-                (W // 2, y + 80), "AKSIYA",
+                (W // 2, y + 55), "AKSIYA",
                 font=self.f["hero"], fill=_rgb(self.PR), anchor="mm",
             )
-            y += 190
+            y += 110
+        y += 20
+
+        # ─ Separator ─
+        self._sep(d, y + 5, W)
+        y += 30
 
         # ─ Title ─
         for line in title_lines:
@@ -247,7 +251,6 @@ class ImageGenerator:
             )
 
             py = ct + 28
-
             otxt = f"{_fmt(old_p)} so'm"
             d.text(
                 (W // 2, py + 14), otxt,
@@ -321,7 +324,7 @@ class ImageGenerator:
         safe = _safe(data.get("store", "unknown"))
         fname = f"promo_{safe}_{data.get('id', 'x')}.png"
         path = self.output_path / fname
-        img.convert("RGB").save(path, "PNG", quality=95)
+        img.save(path, "PNG", quality=95)
         return str(path)
 
     # ── Rating Image ─────────────────────────────────────
@@ -330,11 +333,11 @@ class ImageGenerator:
         self, stores_data: List[Dict], period: str = "Haftalik"
     ) -> str:
         W, H = 1080, 1350
-
-        img = self._bg(W, H).convert("RGBA")
-        self._glow_circles(img)
+        img = self._bg(W, H)
         d = ImageDraw.Draw(img)
+
         self._accent(d, 0, W)
+        self._corners(d, W, H)
 
         d.text(
             (W // 2, 70), f"{period.upper()} REYTING",
@@ -397,7 +400,7 @@ class ImageGenerator:
 
         fname = f"rating_{period.lower()}_{datetime.now().strftime('%Y%m%d')}.png"
         path = self.output_path / fname
-        img.convert("RGB").save(path, "PNG", quality=95)
+        img.save(path, "PNG", quality=95)
         return str(path)
 
     # ── Digest Image ─────────────────────────────────────
@@ -406,11 +409,11 @@ class ImageGenerator:
         self, promotions: List[Dict], title: str = "TOP-5 CHEGIRMALAR"
     ) -> str:
         W, H = 1080, 1350
-
-        img = self._bg(W, H).convert("RGBA")
-        self._glow_circles(img)
+        img = self._bg(W, H)
         d = ImageDraw.Draw(img)
+
         self._accent(d, 0, W)
+        self._corners(d, W, H)
 
         d.text(
             (W // 2, 75), title,
@@ -468,7 +471,7 @@ class ImageGenerator:
 
         fname = f"digest_{datetime.now().strftime('%Y%m%d_%H%M')}.png"
         path = self.output_path / fname
-        img.convert("RGB").save(path, "PNG", quality=95)
+        img.save(path, "PNG", quality=95)
         return str(path)
 
     # ── Helpers ───────────────────────────────────────────
