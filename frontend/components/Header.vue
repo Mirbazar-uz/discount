@@ -1,14 +1,16 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const localePath = useLocalePath()
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
 
-const navItems = [
-  { label: 'Aksiyalar', to: '/#promotions', icon: 'tag' },
-  { label: 'Reyting', to: '/#rating', icon: 'trophy' },
-  { label: "Do'konlar", to: '/#stores', icon: 'store' },
-]
+const navItems = computed(() => [
+  { label: t('nav.promotions'), to: '/#promotions', icon: 'tag' },
+  { label: t('nav.rating'), to: '/#rating', icon: 'trophy' },
+  { label: t('nav.stores'), to: '/#stores', icon: 'store' },
+])
 
 function handleScroll() {
   scrolled.value = window.scrollY > 50
@@ -38,13 +40,14 @@ function closeMobile() {
 function handleNavClick(to: string) {
   closeMobile()
   const [path, hash] = to.split('#')
-  if (route.path === path || (path === '/' && route.path === '/')) {
+  const homePath = localePath('/')
+  if (route.path === homePath || route.path === path || (path === '/' && route.path === homePath)) {
     const el = hash ? document.getElementById(hash) : null
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' })
     }
   } else {
-    router.push(to)
+    router.push(localePath(to))
   }
 }
 </script>
@@ -59,7 +62,7 @@ function handleNavClick(to: string) {
     ]"
   >
     <div class="max-w-7xl mx-auto px-5 flex items-center justify-between">
-      <NuxtLink to="/" class="flex items-center gap-3 group">
+      <NuxtLink :to="localePath('/')" class="flex items-center gap-3 group">
         <div
           class="w-11 h-11 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-xl flex items-center justify-center text-xl shadow-lg transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(124,58,237,0.4)] group-hover:scale-110"
         >
@@ -88,6 +91,8 @@ function handleNavClick(to: string) {
       </ul>
 
       <div class="flex items-center gap-3">
+        <LanguageSwitcher class="hidden sm:flex" />
+
         <a
           href="https://t.me/mirbazar_uz"
           target="_blank"
@@ -96,7 +101,7 @@ function handleNavClick(to: string) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.099.154.232.17.325.015.094.034.31.019.478z"/>
           </svg>
-          Obuna bo'ling
+          {{ t('nav.subscribe') }}
         </a>
 
         <!-- Mobile menu button -->
@@ -146,7 +151,7 @@ function handleNavClick(to: string) {
       >
         <!-- Header -->
         <div class="flex items-center justify-between p-5 border-b border-white/[0.06]">
-          <span class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Menu</span>
+          <span class="text-sm font-semibold text-gray-400 uppercase tracking-wider">{{ t('nav.menu') }}</span>
           <button
             class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all"
             @click="closeMobile"
@@ -179,6 +184,11 @@ function handleNavClick(to: string) {
             </div>
             <span class="font-medium text-[15px]">{{ item.label }}</span>
           </a>
+
+          <!-- Language switcher in mobile -->
+          <div class="px-4 py-3.5">
+            <LanguageSwitcher />
+          </div>
         </nav>
 
         <!-- Telegram CTA -->
@@ -191,7 +201,7 @@ function handleNavClick(to: string) {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.099.154.232.17.325.015.094.034.31.019.478z"/>
             </svg>
-            Telegram kanal
+            {{ t('nav.telegram_channel') }}
           </a>
         </div>
       </div>

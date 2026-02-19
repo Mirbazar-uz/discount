@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
+
 interface RatingStore {
   name: string
   slug: string
@@ -23,7 +26,7 @@ function getPositionStyle(pos: number) {
 
 <template>
   <NuxtLink
-    :to="`/store/${store.slug}`"
+    :to="localePath(`/store/${store.slug}`)"
     class="glass-card-hover p-5 flex items-center gap-4 group relative overflow-hidden"
     :class="position === 0 ? 'ring-1 ring-yellow-500/30' : ''"
   >
@@ -45,7 +48,7 @@ function getPositionStyle(pos: number) {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
           </svg>
-          {{ store.count }} aksiya
+          {{ t('rating.promotions', { count: store.count }) }}
         </span>
         <span>~{{ store.avg_discount.toFixed(0) }}%</span>
       </div>
@@ -56,7 +59,7 @@ function getPositionStyle(pos: number) {
       <span class="text-xl font-extrabold text-green-400">
         {{ store.max_discount }}%
       </span>
-      <span class="block text-[10px] text-gray-500">max</span>
+      <span class="block text-[10px] text-gray-500">{{ t('rating.max') }}</span>
     </div>
 
     <!-- Gold glow for 1st place -->

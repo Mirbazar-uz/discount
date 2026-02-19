@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
+
 interface Promotion {
   id: number
   title: string
@@ -27,7 +30,7 @@ function formatPrice(price: number): string {
 
 <template>
   <NuxtLink
-    :to="`/promotion/${promotion.id}`"
+    :to="localePath(`/promotion/${promotion.id}`)"
     class="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 transition-all duration-500 hover:border-purple-500/40 hover:shadow-[0_0_40px_rgba(124,58,237,0.15)] hover:-translate-y-1"
     :class="[
       promotion.status === 'expired'
@@ -53,7 +56,7 @@ function formatPrice(price: number): string {
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
         </svg>
-        <span class="text-[10px] text-gray-600">Rasm yo'q</span>
+        <span class="text-[10px] text-gray-600">{{ t('promotion.no_image') }}</span>
       </div>
 
       <!-- Gradient overlay -->
@@ -96,7 +99,7 @@ function formatPrice(price: number): string {
         </span>
         <span v-if="promotion.new_price" class="text-green-400 font-bold text-xl">
           {{ formatPrice(promotion.new_price) }}
-          <span class="text-xs text-gray-400 font-normal ml-1">so'm</span>
+          <span class="text-xs text-gray-400 font-normal ml-1">{{ t('common.som') }}</span>
         </span>
       </div>
 
@@ -121,7 +124,7 @@ function formatPrice(price: number): string {
           <span v-else>{{ promotion.deadline_text }}</span>
         </div>
         <span class="text-purple-400 group-hover:text-cyan-400 font-semibold text-xs transition-colors ml-auto">
-          Batafsil &rarr;
+          {{ t('promotion.details') }} &rarr;
         </span>
       </div>
     </div>

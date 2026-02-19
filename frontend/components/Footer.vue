@@ -1,10 +1,15 @@
+<script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
+</script>
+
 <template>
   <footer class="pt-16 pb-8 border-t border-white/[0.06]" style="background: linear-gradient(180deg, var(--bg-primary) 0%, #0d0d14 100%)">
     <div class="max-w-7xl mx-auto px-5">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
         <!-- Brand -->
         <div>
-          <NuxtLink to="/" class="flex items-center gap-3 mb-5 group">
+          <NuxtLink :to="localePath('/')" class="flex items-center gap-3 mb-5 group">
             <div
               class="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]"
             >
@@ -18,7 +23,7 @@
             </span>
           </NuxtLink>
           <p class="text-gray-500 text-sm mb-6 max-w-xs leading-relaxed">
-            O'zbekistondagi barcha chegirmalar bir joyda. Kunlik yangilanish, eng yaxshi narxlar.
+            {{ t('footer.description') }}
           </p>
           <div class="flex gap-3">
             <a
@@ -42,50 +47,50 @@
           </div>
         </div>
 
-        <!-- Do'konlar -->
+        <!-- Stores -->
         <div>
-          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Do'konlar</h4>
+          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">{{ t('footer.stores') }}</h4>
           <ul class="list-none space-y-3">
-            <li><NuxtLink to="/store/texnomart" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Texnomart</NuxtLink></li>
-            <li><NuxtLink to="/store/asaxiy" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Asaxiy</NuxtLink></li>
-            <li><NuxtLink to="/store/mediapark" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Mediapark</NuxtLink></li>
-            <li><NuxtLink to="/store/uzum" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Uzum Market</NuxtLink></li>
-            <li><NuxtLink to="/store/sello" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Sello</NuxtLink></li>
-            <li><NuxtLink to="/store/korzinka" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Korzinka</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/store/texnomart')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Texnomart</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/store/asaxiy')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Asaxiy</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/store/mediapark')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Mediapark</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/store/uzum')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Uzum Market</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/store/sello')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Sello</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/store/korzinka')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Korzinka</NuxtLink></li>
           </ul>
         </div>
 
-        <!-- Kategoriyalar -->
+        <!-- Categories -->
         <div>
-          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Kategoriyalar</h4>
+          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">{{ t('footer.categories') }}</h4>
           <ul class="list-none space-y-3">
-            <li><NuxtLink to="/category/electronics" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Elektronika</NuxtLink></li>
-            <li><NuxtLink to="/category/marketplace" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Marketplace</NuxtLink></li>
-            <li><NuxtLink to="/category/grocery" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Oziq-ovqat</NuxtLink></li>
-            <li><NuxtLink to="/category/fashion" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Kiyim-kechak</NuxtLink></li>
-            <li><NuxtLink to="/category/phones" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Telefonlar</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/category/electronics')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('categories.electronics') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/category/marketplace')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('categories.marketplace') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/category/grocery')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('categories.grocery') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/category/fashion')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('categories.fashion') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/category/phones')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('categories.phones') }}</NuxtLink></li>
           </ul>
         </div>
 
-        <!-- Ma'lumot -->
+        <!-- Info -->
         <div>
-          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Ma'lumot</h4>
+          <h4 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">{{ t('footer.info') }}</h4>
           <ul class="list-none space-y-3">
-            <li><NuxtLink to="/about" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Biz haqimizda</NuxtLink></li>
-            <li><NuxtLink to="/contact" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Bog'lanish</NuxtLink></li>
-            <li><NuxtLink to="/privacy" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Maxfiylik siyosati</NuxtLink></li>
-            <li><NuxtLink to="/terms" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">Foydalanish shartlari</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/about')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('footer.about') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/contact')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('footer.contact') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/privacy')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('footer.privacy') }}</NuxtLink></li>
+            <li><NuxtLink :to="localePath('/terms')" class="text-gray-500 hover:text-purple-400 transition-colors text-sm">{{ t('footer.terms') }}</NuxtLink></li>
           </ul>
         </div>
       </div>
 
       <!-- Bottom -->
       <div class="pt-8 border-t border-white/[0.05] flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="text-gray-600 text-xs">&copy; 2026 Mirbazar.uz — Barcha huquqlar himoyalangan</p>
+        <p class="text-gray-600 text-xs">&copy; 2026 {{ t('footer.copyright') }}</p>
         <div class="flex items-center gap-3 text-gray-600 text-xs">
-          <NuxtLink to="/privacy" class="hover:text-gray-400 transition-colors">Maxfiylik</NuxtLink>
+          <NuxtLink :to="localePath('/privacy')" class="hover:text-gray-400 transition-colors">{{ t('footer.privacy_short') }}</NuxtLink>
           <span>|</span>
-          <NuxtLink to="/terms" class="hover:text-gray-400 transition-colors">Shartlar</NuxtLink>
+          <NuxtLink :to="localePath('/terms')" class="hover:text-gray-400 transition-colors">{{ t('footer.terms_short') }}</NuxtLink>
         </div>
       </div>
     </div>

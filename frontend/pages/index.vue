@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
 const { getPromotions, getWeeklyRating, getStats } = usePromotion()
 const { fetchApi } = useApi()
 
@@ -86,15 +88,15 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: 'Mirbazar — Barcha chegirmalar bir joyda',
-  ogTitle: 'Mirbazar — Barcha chegirmalar bir joyda',
-  description: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
-  ogDescription: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+  title: () => t('seo.home_title'),
+  ogTitle: () => t('seo.home_title'),
+  description: () => t('seo.home_description'),
+  ogDescription: () => t('seo.home_description'),
   ogUrl: 'https://mirbazar.uz',
   ogImage: 'https://mirbazar.uz/og-image.png',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Mirbazar — Barcha chegirmalar bir joyda',
-  twitterDescription: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+  twitterTitle: () => t('seo.home_title'),
+  twitterDescription: () => t('seo.home_description'),
   twitterImage: 'https://mirbazar.uz/og-image.png',
 })
 
@@ -117,12 +119,12 @@ useHead({
       <div class="max-w-7xl mx-auto px-5 relative">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div>
-            <h2 class="section-title">Haftalik reyting</h2>
-            <p class="text-gray-500 text-sm mt-2">Eng ko'p chegirma bergan do'konlar</p>
+            <h2 class="section-title">{{ t('home.weekly_rating') }}</h2>
+            <p class="text-gray-500 text-sm mt-2">{{ t('home.top_discount_stores') }}</p>
           </div>
           <div class="badge-live">
             <span class="w-2 h-2 bg-green-400 rounded-full" style="animation: blink 1.5s ease-in-out infinite"></span>
-            Yangilanmoqda
+            {{ t('home.updating') }}
           </div>
         </div>
 
@@ -150,7 +152,7 @@ useHead({
           <svg class="mx-auto mb-3 text-gray-600" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
-          <p class="text-gray-500 text-sm">Hali reyting ma'lumotlari yo'q</p>
+          <p class="text-gray-500 text-sm">{{ t('home.no_rating_data') }}</p>
         </div>
       </div>
     </section>
@@ -172,8 +174,8 @@ useHead({
       <div class="max-w-7xl mx-auto px-5">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div class="flex items-center gap-4">
-            <h2 class="section-title">Joriy aksiyalar</h2>
-            <span class="text-gray-500 text-sm">{{ totalPromotions }} ta</span>
+            <h2 class="section-title">{{ t('home.current_promotions') }}</h2>
+            <span class="text-gray-500 text-sm">{{ t('home.count_promotions', { count: totalPromotions }) }}</span>
           </div>
         </div>
 
@@ -204,8 +206,8 @@ useHead({
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
             </svg>
           </div>
-          <p class="text-lg text-gray-300 mb-2 font-medium">Aksiyalar topilmadi</p>
-          <p class="text-sm text-gray-500">Boshqa kategoriyani tanlang yoki qidiruv so'zini o'zgartiring</p>
+          <p class="text-lg text-gray-300 mb-2 font-medium">{{ t('home.no_promotions_found') }}</p>
+          <p class="text-sm text-gray-500">{{ t('home.try_other_category') }}</p>
         </div>
       </div>
     </section>
@@ -216,8 +218,8 @@ useHead({
       <div class="max-w-7xl mx-auto px-5 relative">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div>
-            <h2 class="section-title">Do'konlar</h2>
-            <p class="text-gray-500 text-sm mt-2">Barcha do'konlar va ularning aksiyalari</p>
+            <h2 class="section-title">{{ t('home.stores') }}</h2>
+            <p class="text-gray-500 text-sm mt-2">{{ t('home.all_stores_promotions') }}</p>
           </div>
         </div>
 
@@ -244,7 +246,7 @@ useHead({
           <svg class="mx-auto mb-3 text-gray-600" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M3 3h18l-2 13H5L3 3zm0 0l-1-1M7 16v5M17 16v5M2 21h20"/>
           </svg>
-          <p class="text-gray-500 text-sm">Hali do'konlar ma'lumotlari yo'q</p>
+          <p class="text-gray-500 text-sm">{{ t('home.no_stores_data') }}</p>
         </div>
       </div>
     </section>

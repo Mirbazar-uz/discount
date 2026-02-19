@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const { getStats } = usePromotion()
 
 const stats = ref({ total_promotions: 0, active_promotions: 0, total_stores: 0, max_discount: 0 })
@@ -12,9 +13,9 @@ onMounted(async () => {
 })
 
 useHead({
-  title: 'Biz haqimizda — Mirbazar.uz',
+  title: () => t('seo.about_title'),
   meta: [
-    { name: 'description', content: 'Mirbazar.uz — O\'zbekistondagi barcha chegirmalar bir joyda. Biz haqimizda.' },
+    { name: 'description', content: () => t('seo.about_description') },
   ],
 })
 </script>
@@ -33,56 +34,53 @@ useHead({
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
           </svg>
         </div>
-        <h1 class="section-title mb-4">Mirbazar haqida</h1>
+        <h1 class="section-title mb-4">{{ t('about.title') }}</h1>
         <p class="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          O'zbekistondagi barcha do'konlarning chegirmalari va aksiyalarini bir joyga jamlaydigan platforma
+          {{ t('about.subtitle') }}
         </p>
       </div>
 
       <div class="space-y-10">
-        <!-- Statistika -->
+        <!-- Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="glass-card p-6 text-center">
             <p class="text-3xl font-bold gradient-text">{{ stats.total_stores || '10+' }}</p>
-            <p class="text-gray-500 text-sm mt-1">Do'konlar</p>
+            <p class="text-gray-500 text-sm mt-1">{{ t('about.stats_stores') }}</p>
           </div>
           <div class="glass-card p-6 text-center">
             <p class="text-3xl font-bold gradient-text">{{ stats.active_promotions || '100+' }}</p>
-            <p class="text-gray-500 text-sm mt-1">Faol aksiyalar</p>
+            <p class="text-gray-500 text-sm mt-1">{{ t('about.stats_active') }}</p>
           </div>
           <div class="glass-card p-6 text-center">
             <p class="text-3xl font-bold gradient-text">{{ stats.max_discount || 70 }}%</p>
-            <p class="text-gray-500 text-sm mt-1">Eng katta chegirma</p>
+            <p class="text-gray-500 text-sm mt-1">{{ t('about.stats_max_discount') }}</p>
           </div>
           <div class="glass-card p-6 text-center">
             <p class="text-3xl font-bold gradient-text">24/7</p>
-            <p class="text-gray-500 text-sm mt-1">Yangilanish</p>
+            <p class="text-gray-500 text-sm mt-1">{{ t('about.stats_updates') }}</p>
           </div>
         </div>
 
-        <!-- Missiya -->
+        <!-- Mission -->
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">Bizning missiyamiz</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('about.mission_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Mirbazar O'zbekiston xaridorlariga eng yaxshi narxlarni topishda yordam berish maqsadida
-            yaratilgan. Biz har kuni o'nlab do'konlarning chegirmalarini kuzatamiz va foydalanuvchilarga
-            qulay formatda taqdim etamiz. Bizning maqsadimiz — har bir xaridor uchun eng foydali
-            takliflarni topishni osonlashtirish.
+            {{ t('about.mission_text') }}
           </p>
         </section>
 
-        <!-- Qanday ishlaydi -->
+        <!-- How it works -->
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">Qanday ishlaydi?</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('about.how_title') }}</h2>
           <div class="space-y-6 mt-6">
             <div class="flex items-start gap-4">
               <div class="w-10 h-10 shrink-0 bg-purple-500/20 border border-purple-500/30 rounded-xl flex items-center justify-center text-purple-400 font-bold">
                 1
               </div>
               <div>
-                <h3 class="text-white font-medium mb-1">Ma'lumot yig'ish</h3>
+                <h3 class="text-white font-medium mb-1">{{ t('about.step1_title') }}</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                  Tizimimiz do'konlarning rasmiy Telegram kanallaridan chegirma e'lonlarini avtomatik ravishda kuzatadi.
+                  {{ t('about.step1_text') }}
                 </p>
               </div>
             </div>
@@ -91,9 +89,9 @@ useHead({
                 2
               </div>
               <div>
-                <h3 class="text-white font-medium mb-1">AI tahlili</h3>
+                <h3 class="text-white font-medium mb-1">{{ t('about.step2_title') }}</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                  Sun'iy intellekt yordamida chegirma foizlari, mahsulot turlari va amal qilish muddatlari ajratiladi.
+                  {{ t('about.step2_text') }}
                 </p>
               </div>
             </div>
@@ -102,9 +100,9 @@ useHead({
                 3
               </div>
               <div>
-                <h3 class="text-white font-medium mb-1">Tartiblash va filtrlash</h3>
+                <h3 class="text-white font-medium mb-1">{{ t('about.step3_title') }}</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                  Barcha chegirmalar kategoriyalar va do'konlar bo'yicha tartiblanadi, izlash osonlashadi.
+                  {{ t('about.step3_text') }}
                 </p>
               </div>
             </div>
@@ -113,20 +111,20 @@ useHead({
                 4
               </div>
               <div>
-                <h3 class="text-white font-medium mb-1">Yetkazib berish</h3>
+                <h3 class="text-white font-medium mb-1">{{ t('about.step4_title') }}</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                  Chegirmalar veb-sayt, Telegram kanal va Instagram orqali foydalanuvchilarga yetkaziladi.
+                  {{ t('about.step4_text') }}
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Qo'llab-quvvatlanadigan do'konlar -->
+        <!-- Stores -->
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">Do'konlar</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('about.stores_title') }}</h2>
           <p class="text-gray-400 leading-relaxed mb-4">
-            Hozirda quyidagi do'konlarning chegirmalarini kuzatamiz:
+            {{ t('about.stores_text') }}
           </p>
           <div class="flex flex-wrap gap-2">
             <span
@@ -141,8 +139,8 @@ useHead({
 
         <!-- CTA -->
         <section class="glass-card p-8 text-center">
-          <h2 class="text-xl font-semibold text-white mb-3">Chegirmalarni o'tkazib yubormang!</h2>
-          <p class="text-gray-400 mb-6">Telegram kanalimizga obuna bo'ling va eng yaxshi takliflardan xabardor bo'ling</p>
+          <h2 class="text-xl font-semibold text-white mb-3">{{ t('about.cta_title') }}</h2>
+          <p class="text-gray-400 mb-6">{{ t('about.cta_text') }}</p>
           <a
             href="https://t.me/mirbazar_uz"
             target="_blank"
@@ -152,7 +150,7 @@ useHead({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.099.154.232.17.325.015.094.034.31.019.478z"/>
             </svg>
-            Telegram kanalga obuna bo'lish
+            {{ t('about.cta_button') }}
           </a>
         </section>
       </div>

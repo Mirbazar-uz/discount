@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
+
 interface Store {
   id: number
   name: string
@@ -15,7 +18,7 @@ defineProps<{
 
 <template>
   <NuxtLink
-    :to="`/store/${store.slug}`"
+    :to="localePath(`/store/${store.slug}`)"
     class="glass-card-hover p-5 flex items-center gap-4 group"
   >
     <div
@@ -29,9 +32,7 @@ defineProps<{
         {{ store.name }}
       </h3>
       <p class="text-gray-500 text-xs mt-0.5">
-        <span v-if="store.promotion_count > 0" class="text-green-400/80">{{ store.promotion_count }}</span>
-        <span v-else class="text-gray-600">0</span>
-        ta aksiya
+        {{ t('common.promotions_count', { count: store.promotion_count }) }}
       </p>
     </div>
     <div class="flex items-center gap-2 shrink-0">
@@ -39,7 +40,7 @@ defineProps<{
         v-if="store.promotion_count > 0"
         class="hidden sm:inline-flex px-2 py-0.5 rounded-md bg-green-500/10 text-green-400 text-xs font-medium border border-green-500/20"
       >
-        Aktiv
+        {{ t('common.active') }}
       </span>
       <svg class="text-gray-600 group-hover:text-purple-400 transition-all duration-300 group-hover:translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M9 18l6-6-6-6"/>

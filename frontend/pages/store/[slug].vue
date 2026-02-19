@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -16,9 +18,9 @@ const storeName = computed(() => {
   return slug
 })
 
-const storeTitle = computed(() => `${storeName.value} aksiyalari — Mirbazar`)
+const storeTitle = computed(() => `${storeName.value} — Mirbazar`)
 const storeDescription = computed(
-  () => `${storeName.value} do'konining barcha aksiyalari va chegirmalari. Mirbazar.uz da eng yaxshi narxlar.`
+  () => `${storeName.value} — Mirbazar.uz`
 )
 const storeUrl = computed(() => `https://mirbazar.uz/store/${slug}`)
 
@@ -46,13 +48,13 @@ useHead({
       <!-- Header -->
       <div class="mb-10">
         <NuxtLink
-          to="/"
+          :to="localePath('/')"
           class="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 text-sm transition-colors mb-6 group"
         >
           <svg class="transition-transform group-hover:-translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6"/>
           </svg>
-          Bosh sahifa
+          {{ t('store.home') }}
         </NuxtLink>
 
         <div class="flex items-center gap-4">
@@ -63,7 +65,7 @@ useHead({
             <h1 class="text-3xl md:text-4xl font-bold text-white">
               {{ storeName }}
             </h1>
-            <p class="text-gray-500 mt-1">{{ total }} ta aksiya topildi</p>
+            <p class="text-gray-500 mt-1">{{ t('store.promotions_found', { count: total }) }}</p>
           </div>
         </div>
       </div>
@@ -95,11 +97,11 @@ useHead({
             <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
           </svg>
         </div>
-        <p class="text-lg text-gray-300 mb-2 font-medium">Hozircha bu do'konda aksiyalar yo'q</p>
-        <p class="text-sm text-gray-500 mb-6">Tez orada yangi aksiyalar qo'shiladi</p>
-        <NuxtLink to="/" class="inline-flex items-center gap-2 text-purple-400 hover:text-cyan-400 text-sm transition-colors font-medium">
+        <p class="text-lg text-gray-300 mb-2 font-medium">{{ t('store.no_promotions') }}</p>
+        <p class="text-sm text-gray-500 mb-6">{{ t('store.coming_soon') }}</p>
+        <NuxtLink :to="localePath('/')" class="inline-flex items-center gap-2 text-purple-400 hover:text-cyan-400 text-sm transition-colors font-medium">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          Bosh sahifaga qaytish
+          {{ t('store.go_home') }}
         </NuxtLink>
       </div>
     </div>

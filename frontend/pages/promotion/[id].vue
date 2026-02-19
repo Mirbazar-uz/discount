@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
 const route = useRoute()
 const id = Number(route.params.id)
 
@@ -25,15 +27,15 @@ const hasPrices = computed(() => {
 })
 
 const pageTitle = computed(() =>
-  promotion.value ? `${promotion.value.title} — Mirbazar` : 'Aksiya — Mirbazar'
+  promotion.value ? `${promotion.value.title} — Mirbazar` : `${t('promotion.promotions')} — Mirbazar`
 )
 
 const pageDescription = computed(() => {
-  if (!promotion.value) return "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar"
+  if (!promotion.value) return t('seo.home_description')
   const parts = [promotion.value.title]
-  if (promotion.value.store) parts.push(`${promotion.value.store} do'konida`)
-  if (promotion.value.discount_text) parts.push(`${promotion.value.discount_text} chegirma`)
-  else if (promotion.value.discount_percent) parts.push(`${promotion.value.discount_percent}% chegirma`)
+  if (promotion.value.store) parts.push(`${promotion.value.store}`)
+  if (promotion.value.discount_text) parts.push(`${promotion.value.discount_text}`)
+  else if (promotion.value.discount_percent) parts.push(`${promotion.value.discount_percent}%`)
   return parts.join(' — ')
 })
 
@@ -116,10 +118,10 @@ onUnmounted(() => {
       <!-- Breadcrumb -->
       <div class="flex items-center gap-2 text-sm mb-8">
         <NuxtLink
-          to="/"
+          :to="localePath('/')"
           class="text-gray-500 hover:text-purple-400 transition-colors"
         >
-          Bosh sahifa
+          {{ t('promotion.home') }}
         </NuxtLink>
         <svg class="text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 18l6-6-6-6"/>
@@ -128,7 +130,7 @@ onUnmounted(() => {
           to="/#promotions"
           class="text-gray-500 hover:text-purple-400 transition-colors"
         >
-          Aksiyalar
+          {{ t('promotion.promotions') }}
         </NuxtLink>
         <svg class="text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 18l6-6-6-6"/>
@@ -143,9 +145,9 @@ onUnmounted(() => {
         <svg class="mx-auto mb-4 text-gray-600" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
         </svg>
-        <p class="text-xl text-gray-400 mb-2">Aksiya topilmadi</p>
-        <NuxtLink to="/" class="text-purple-400 hover:text-cyan-400 text-sm transition-colors">
-          Bosh sahifaga qaytish
+        <p class="text-xl text-gray-400 mb-2">{{ t('promotion.not_found') }}</p>
+        <NuxtLink :to="localePath('/')" class="text-purple-400 hover:text-cyan-400 text-sm transition-colors">
+          {{ t('promotion.go_home') }}
         </NuxtLink>
       </div>
 
@@ -190,7 +192,7 @@ onUnmounted(() => {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
                 </svg>
-                Kattalashtirish
+                {{ t('promotion.zoom') }}
               </div>
 
               <!-- Image counter badge -->
@@ -245,7 +247,7 @@ onUnmounted(() => {
                 "
                 @click="activeImage = i"
               >
-                <img :src="url" :alt="`Rasm ${i + 1}`" class="w-full h-full object-cover" />
+                <img :src="url" :alt="t('promotion.image_n', { n: i + 1 })" class="w-full h-full object-cover" />
               </button>
             </div>
           </div>
@@ -256,7 +258,7 @@ onUnmounted(() => {
             <div class="flex flex-wrap items-center gap-3 mb-5">
               <NuxtLink
                 v-if="promotion.store_slug"
-                :to="`/store/${promotion.store_slug}`"
+                :to="localePath(`/store/${promotion.store_slug}`)"
                 class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm hover:border-purple-500/40 hover:text-white transition-all"
               >
                 <div class="w-5 h-5 rounded bg-gradient-to-br from-purple-500/50 to-cyan-500/50 flex items-center justify-center text-[10px] font-bold text-white">
@@ -303,16 +305,16 @@ onUnmounted(() => {
             <div v-if="hasPrices" class="mb-8 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
               <div class="flex items-end gap-3 flex-wrap">
                 <div v-if="promotion.new_price">
-                  <span class="block text-gray-500 text-xs mb-1 uppercase tracking-wider">Yangi narx</span>
+                  <span class="block text-gray-500 text-xs mb-1 uppercase tracking-wider">{{ t('promotion.new_price') }}</span>
                   <span class="text-green-400 font-bold text-3xl md:text-4xl leading-none">
                     {{ formatPrice(promotion.new_price) }}
-                    <span class="text-base font-normal text-gray-500 ml-1">so'm</span>
+                    <span class="text-base font-normal text-gray-500 ml-1">{{ t('promotion.som') }}</span>
                   </span>
                 </div>
                 <div v-if="promotion.old_price" class="pb-1">
-                  <span class="block text-gray-600 text-xs mb-1 uppercase tracking-wider">Oldingi narx</span>
+                  <span class="block text-gray-600 text-xs mb-1 uppercase tracking-wider">{{ t('promotion.old_price') }}</span>
                   <span class="text-gray-500 line-through text-lg">
-                    {{ formatPrice(promotion.old_price) }} so'm
+                    {{ formatPrice(promotion.old_price) }} {{ t('promotion.som') }}
                   </span>
                 </div>
               </div>
@@ -329,7 +331,7 @@ onUnmounted(() => {
                 <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                 <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
               </svg>
-              Xarid qilish
+              {{ t('promotion.buy_now') }}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
               </svg>
@@ -341,7 +343,7 @@ onUnmounted(() => {
                 <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
                 <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
               </svg>
-              Telegram postdan olingan
+              {{ t('promotion.from_telegram') }}
             </div>
           </div>
         </div>
@@ -421,7 +423,7 @@ onUnmounted(() => {
             "
             @click="activeImage = i"
           >
-            <img :src="url" :alt="`Rasm ${i + 1}`" class="w-full h-full object-cover" />
+            <img :src="url" :alt="t('promotion.image_n', { n: i + 1 })" class="w-full h-full object-cover" />
           </button>
         </div>
       </div>

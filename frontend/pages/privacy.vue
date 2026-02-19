@@ -1,8 +1,10 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 useHead({
-  title: 'Maxfiylik siyosati — Mirbazar.uz',
+  title: () => t('seo.privacy_title'),
   meta: [
-    { name: 'description', content: 'Mirbazar.uz maxfiylik siyosati. Shaxsiy ma\'lumotlaringiz qanday yig\'ilishi va ishlatilishi haqida.' },
+    { name: 'description', content: () => t('seo.privacy_description') },
   ],
 })
 </script>
@@ -10,124 +12,115 @@ useHead({
 <template>
   <div class="pt-28 pb-20">
     <div class="max-w-4xl mx-auto px-5">
-      <h1 class="section-title mb-4">Maxfiylik siyosati</h1>
-      <p class="text-gray-500 text-sm mb-12">Oxirgi yangilanish: 2026-yil, fevral</p>
+      <h1 class="section-title mb-4">{{ t('privacy.title') }}</h1>
+      <p class="text-gray-500 text-sm mb-12">{{ t('privacy.last_updated') }}</p>
 
       <div class="space-y-10">
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">1. Umumiy ma'lumot</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s1_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Mirbazar.uz — O'zbekistondagi do'konlarning chegirmalarini jamlash xizmati. Biz foydalanuvchilarimizning
-            maxfiyligini hurmat qilamiz va shaxsiy ma'lumotlarni himoya qilishga intilnamiz. Ushbu siyosat
-            saytimizda qanday ma'lumotlar yig'ilishi va ular qanday ishlatilishini tushuntiradi.
+            {{ t('privacy.s1_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">2. Yig'iladigan ma'lumotlar</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s2_title') }}</h2>
           <p class="text-gray-400 leading-relaxed mb-4">
-            Saytimizdan foydalanishda quyidagi ma'lumotlar avtomatik ravishda yig'ilishi mumkin:
+            {{ t('privacy.s2_intro') }}
           </p>
           <ul class="space-y-3 text-gray-400">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>IP manzil va qurilma haqida umumiy texnik ma'lumotlar</span>
+              <span>{{ t('privacy.s2_item1') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Saytdagi harakatlar (ko'rilgan sahifalar, qidiruv so'rovlari)</span>
+              <span>{{ t('privacy.s2_item2') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Brauzer turi va operatsion tizim ma'lumotlari</span>
+              <span>{{ t('privacy.s2_item3') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Cookie va shunga o'xshash texnologiyalar orqali yig'ilgan ma'lumotlar</span>
+              <span>{{ t('privacy.s2_item4') }}</span>
             </li>
           </ul>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">3. Google Analytics</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s3_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Biz sayt trafikini tahlil qilish uchun Google Analytics xizmatidan foydalanamiz. Google Analytics
-            cookie fayllaridan foydalanib, foydalanuvchilarning saytdan qanday foydalanishi haqida anonim
-            statistik ma'lumotlarni yig'adi. Bu ma'lumotlar saytni yaxshilash maqsadida ishlatiladi. Batafsil
-            ma'lumot uchun Google'ning maxfiylik siyosatini ko'ring.
+            {{ t('privacy.s3_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">4. Google AdSense reklamalari</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s4_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Saytimizda Google AdSense orqali reklamalar ko'rsatilishi mumkin. Google AdSense cookie fayllaridan
-            foydalanib, foydalanuvchilarga ularning qiziqishlariga mos reklamalarni ko'rsatadi. Google
-            reklamalarini shaxsiylashtirish sozlamalarini
+            {{ t('privacy.s4_text') }}
             <a href="https://adssettings.google.com" target="_blank" rel="noopener" class="text-purple-400 hover:text-purple-300 transition-colors">
-              Google Reklama Sozlamalari
+              {{ t('privacy.s4_link') }}
             </a>
-            sahifasida boshqarishingiz mumkin.
+            {{ t('privacy.s4_text_end') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">5. Cookie fayllari</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s5_title') }}</h2>
           <p class="text-gray-400 leading-relaxed mb-4">
-            Saytimiz quyidagi maqsadlarda cookie fayllaridan foydalanadi:
+            {{ t('privacy.s5_intro') }}
           </p>
           <ul class="space-y-3 text-gray-400">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 shrink-0"></span>
-              <span><strong class="text-white">Zaruriy cookie'lar</strong> — saytning to'g'ri ishlashi uchun</span>
+              <span><strong class="text-white">{{ t('privacy.s5_essential') }}</strong> — {{ t('privacy.s5_essential_desc') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 shrink-0"></span>
-              <span><strong class="text-white">Analitik cookie'lar</strong> — Google Analytics orqali sayt statistikasini yig'ish</span>
+              <span><strong class="text-white">{{ t('privacy.s5_analytics') }}</strong> — {{ t('privacy.s5_analytics_desc') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 shrink-0"></span>
-              <span><strong class="text-white">Reklama cookie'lari</strong> — Google AdSense orqali moslashtirilgan reklamalar</span>
+              <span><strong class="text-white">{{ t('privacy.s5_ads') }}</strong> — {{ t('privacy.s5_ads_desc') }}</span>
             </li>
           </ul>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">6. Ma'lumotlarni saqlash va himoya</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s6_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Biz foydalanuvchilarning shaxsiy ma'lumotlarini uchinchi tomonlarga sotmaymiz yoki taqdim etmaymiz
-            (qonun talabi bo'lgan holatlardan tashqari). Yig'ilgan barcha ma'lumotlar xavfsiz serverlarda
-            saqlanadi va ruxsatsiz kirishdan himoyalangan.
+            {{ t('privacy.s6_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">7. Foydalanuvchi huquqlari</h2>
-          <p class="text-gray-400 leading-relaxed mb-4">Siz quyidagi huquqlarga egasiz:</p>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s7_title') }}</h2>
+          <p class="text-gray-400 leading-relaxed mb-4">{{ t('privacy.s7_intro') }}</p>
           <ul class="space-y-3 text-gray-400">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 shrink-0"></span>
-              <span>O'zingiz haqida yig'ilgan ma'lumotlarni so'rash</span>
+              <span>{{ t('privacy.s7_item1') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 shrink-0"></span>
-              <span>Ma'lumotlarni o'chirtirishni talab qilish</span>
+              <span>{{ t('privacy.s7_item2') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 shrink-0"></span>
-              <span>Cookie fayllarini brauzer sozlamalarida boshqarish</span>
+              <span>{{ t('privacy.s7_item3') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 shrink-0"></span>
-              <span>Reklama shaxsiylashtirishdan voz kechish</span>
+              <span>{{ t('privacy.s7_item4') }}</span>
             </li>
           </ul>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">8. Bog'lanish</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('privacy.s8_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Maxfiylik siyosati bo'yicha savollaringiz bo'lsa, biz bilan bog'laning:
+            {{ t('privacy.s8_text') }}
           </p>
           <div class="mt-4 flex flex-wrap gap-3">
             <a

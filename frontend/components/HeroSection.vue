@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
+
 const props = defineProps<{
   totalPromotions: number
   totalStores: number
@@ -89,20 +92,19 @@ watch(() => props.maxDiscount, (val) => {
             class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.07] backdrop-blur-xl border border-white/[0.15] text-sm text-gray-300 mb-8"
           >
             <span class="w-2 h-2 bg-green-400 rounded-full" style="animation: blink 1.5s ease-in-out infinite"></span>
-            <span>{{ totalPromotions }} ta aktiv aksiya</span>
+            <span>{{ t('hero.active_promotions', { count: totalPromotions }) }}</span>
           </div>
 
           <h1 class="text-4xl md:text-5xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight" style="line-height: 1.05">
-            <span class="gradient-text">Barcha</span>
+            <span class="gradient-text">{{ t('hero.all') }}</span>
             <br />
-            <span class="gradient-text">chegirmalar</span>
+            <span class="gradient-text">{{ t('hero.discounts') }}</span>
             <br />
-            <span class="text-white">bir joyda</span>
+            <span class="text-white">{{ t('hero.in_one_place') }}</span>
           </h1>
 
           <p class="text-base md:text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
-            O'zbekistondagi eng yaxshi aksiyalarni o'tkazib yubormang!
-            Texnomart, Asaxiy, Mediapark va boshqa do'konlar.
+            {{ t('hero.subtitle') }}
           </p>
 
           <div class="flex flex-wrap gap-4 mb-12">
@@ -114,10 +116,10 @@ watch(() => props.maxDiscount, (val) => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.099.154.232.17.325.015.094.034.31.019.478z"/>
               </svg>
-              Telegram kanal
+              {{ t('hero.telegram_channel') }}
             </a>
             <a href="#promotions" class="btn-secondary text-lg">
-              Aksiyalarni ko'rish
+              {{ t('hero.view_promotions') }}
             </a>
           </div>
         </div>
@@ -132,7 +134,7 @@ watch(() => props.maxDiscount, (val) => {
             <div class="relative glass-card p-8 animate-glow-pulse">
               <div class="flex items-center justify-between mb-6">
                 <span class="badge-discount">-70%</span>
-                <span class="text-gray-400 text-sm">Bugungi eng yaxshi</span>
+                <span class="text-gray-400 text-sm">{{ t('hero.best_today') }}</span>
               </div>
               <div class="space-y-4">
                 <div class="h-3 w-3/4 rounded-full bg-white/10"></div>
@@ -140,13 +142,13 @@ watch(() => props.maxDiscount, (val) => {
               </div>
               <div class="mt-6 flex items-center gap-3">
                 <span class="text-gray-500 line-through text-lg">3 990 000</span>
-                <span class="text-green-400 font-bold text-2xl">1 990 000 so'm</span>
+                <span class="text-green-400 font-bold text-2xl">1 990 000 {{ t('common.som') }}</span>
               </div>
               <div class="mt-4 flex items-center gap-2 text-orange-400 text-sm">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                 </svg>
-                2 kun qoldi
+                {{ t('hero.days_left') }}
               </div>
 
               <!-- Small floating badges -->
@@ -172,17 +174,17 @@ watch(() => props.maxDiscount, (val) => {
         <div class="flex justify-between items-center hero-stats">
           <div class="text-center flex-1">
             <span class="block text-3xl md:text-4xl font-extrabold text-white">{{ animatedPromos }}</span>
-            <span class="text-sm text-gray-400 mt-1">Aksiyalar</span>
+            <span class="text-sm text-gray-400 mt-1">{{ t('hero.stats_promotions') }}</span>
           </div>
           <div class="w-px h-12 bg-white/10 stat-divider"></div>
           <div class="text-center flex-1">
             <span class="block text-3xl md:text-4xl font-extrabold text-white">{{ animatedStores }}</span>
-            <span class="text-sm text-gray-400 mt-1">Do'konlar</span>
+            <span class="text-sm text-gray-400 mt-1">{{ t('hero.stats_stores') }}</span>
           </div>
           <div class="w-px h-12 bg-white/10 stat-divider"></div>
           <div class="text-center flex-1">
             <span class="block text-3xl md:text-4xl font-extrabold gradient-text">{{ animatedDiscount }}%</span>
-            <span class="text-sm text-gray-400 mt-1">Gacha chegirma</span>
+            <span class="text-sm text-gray-400 mt-1">{{ t('hero.stats_discount') }}</span>
           </div>
         </div>
       </div>

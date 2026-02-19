@@ -1,17 +1,19 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 interface Category {
   slug: string
-  label: string
+  labelKey: string
   icon: string
 }
 
 const categories: Category[] = [
-  { slug: 'all', label: 'Hammasi', icon: 'fire' },
-  { slug: 'electronics', label: 'Elektronika', icon: 'phone' },
-  { slug: 'grocery', label: 'Oziq-ovqat', icon: 'cart' },
-  { slug: 'marketplace', label: 'Marketplace', icon: 'store' },
-  { slug: 'fashion', label: 'Kiyim-kechak', icon: 'shirt' },
-  { slug: 'phones', label: 'Telefonlar', icon: 'smartphone' },
+  { slug: 'all', labelKey: 'categories.all', icon: 'fire' },
+  { slug: 'electronics', labelKey: 'categories.electronics', icon: 'phone' },
+  { slug: 'grocery', labelKey: 'categories.grocery', icon: 'cart' },
+  { slug: 'marketplace', labelKey: 'categories.marketplace', icon: 'store' },
+  { slug: 'fashion', labelKey: 'categories.fashion', icon: 'shirt' },
+  { slug: 'phones', labelKey: 'categories.phones', icon: 'smartphone' },
 ]
 
 const icons: Record<string, string> = {
@@ -52,7 +54,7 @@ function selectCategory(slug: string) {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path :d="icons[cat.icon]"/>
       </svg>
-      {{ cat.label }}
+      {{ t(cat.labelKey) }}
     </button>
   </div>
 </template>

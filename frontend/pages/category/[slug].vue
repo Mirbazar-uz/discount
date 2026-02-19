@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const localePath = useLocalePath()
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -8,21 +10,7 @@ const promotions = ref<any[]>([])
 const total = ref(0)
 const loading = ref(true)
 
-const categoryNames: Record<string, string> = {
-  smartphones: 'Smartfonlar',
-  tv: 'Televizorlar',
-  laptop: 'Noutbuklar',
-  appliances: 'Maishiy texnika',
-  food: 'Oziq-ovqat',
-  electronics: 'Elektronika',
-  grocery: 'Oziq-ovqat',
-  fashion: 'Kiyim-kechak',
-  marketplace: 'Marketplace',
-  phones: 'Telefonlar',
-  other: 'Boshqa',
-}
-
-const categoryName = computed(() => categoryNames[slug] || slug)
+const categoryName = computed(() => t(`categories.${slug}`) !== `categories.${slug}` ? t(`categories.${slug}`) : slug)
 
 async function loadData() {
   loading.value = true
@@ -39,9 +27,9 @@ async function loadData() {
 
 onMounted(loadData)
 
-const categoryTitle = computed(() => `${categoryName.value} aksiyalari — Mirbazar`)
+const categoryTitle = computed(() => `${categoryName.value} — Mirbazar`)
 const categoryDescription = computed(
-  () => `${categoryName.value} bo'yicha eng yaxshi aksiyalar va chegirmalar. Mirbazar.uz da barcha narxlar bir joyda.`
+  () => `${categoryName.value} — Mirbazar.uz`
 )
 const categoryUrl = computed(() => `https://mirbazar.uz/category/${slug}`)
 
@@ -69,19 +57,19 @@ useHead({
       <!-- Header -->
       <div class="mb-10">
         <NuxtLink
-          to="/"
+          :to="localePath('/')"
           class="inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 text-sm transition-colors mb-6 group"
         >
           <svg class="transition-transform group-hover:-translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6"/>
           </svg>
-          Bosh sahifa
+          {{ t('category.home') }}
         </NuxtLink>
 
         <h1 class="text-3xl md:text-4xl font-bold text-white">
           {{ categoryName }}
         </h1>
-        <p class="text-gray-500 mt-2">{{ total }} ta aksiya topildi</p>
+        <p class="text-gray-500 mt-2">{{ t('category.promotions_found', { count: total }) }}</p>
       </div>
 
       <!-- Loading skeleton -->
@@ -111,11 +99,11 @@ useHead({
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
         </div>
-        <p class="text-lg text-gray-300 mb-2 font-medium">Bu kategoriyada aksiyalar topilmadi</p>
-        <p class="text-sm text-gray-500 mb-6">Boshqa kategoriyalarni ko'rib chiqing</p>
-        <NuxtLink to="/" class="inline-flex items-center gap-2 text-purple-400 hover:text-cyan-400 text-sm transition-colors font-medium">
+        <p class="text-lg text-gray-300 mb-2 font-medium">{{ t('category.no_promotions') }}</p>
+        <p class="text-sm text-gray-500 mb-6">{{ t('category.try_other') }}</p>
+        <NuxtLink :to="localePath('/')" class="inline-flex items-center gap-2 text-purple-400 hover:text-cyan-400 text-sm transition-colors font-medium">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          Bosh sahifaga qaytish
+          {{ t('category.go_home') }}
         </NuxtLink>
       </div>
     </div>

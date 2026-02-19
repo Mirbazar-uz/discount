@@ -1,8 +1,10 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 useHead({
-  title: 'Foydalanish shartlari — Mirbazar.uz',
+  title: () => t('seo.terms_title'),
   meta: [
-    { name: 'description', content: 'Mirbazar.uz xizmatidan foydalanish shartlari va qoidalari.' },
+    { name: 'description', content: () => t('seo.terms_description') },
   ],
 })
 </script>
@@ -10,117 +12,109 @@ useHead({
 <template>
   <div class="pt-28 pb-20">
     <div class="max-w-4xl mx-auto px-5">
-      <h1 class="section-title mb-4">Foydalanish shartlari</h1>
-      <p class="text-gray-500 text-sm mb-12">Oxirgi yangilanish: 2026-yil, fevral</p>
+      <h1 class="section-title mb-4">{{ t('terms.title') }}</h1>
+      <p class="text-gray-500 text-sm mb-12">{{ t('terms.last_updated') }}</p>
 
       <div class="space-y-10">
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">1. Umumiy qoidalar</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s1_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Mirbazar.uz saytidan foydalanish orqali siz ushbu shartlarga rozilik bildirasiz. Agar siz ushbu
-            shartlar bilan rozi bo'lmasangiz, saytdan foydalanmaslikingizni so'raymiz. Mirbazar.uz — bu
-            O'zbekistondagi do'konlarning chegirmalarini va aksiyalarini jamlash xizmati.
+            {{ t('terms.s1_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">2. Xizmat tavsifi</h2>
-          <p class="text-gray-400 leading-relaxed mb-4">Mirbazar.uz quyidagi xizmatlarni taqdim etadi:</p>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s2_title') }}</h2>
+          <p class="text-gray-400 leading-relaxed mb-4">{{ t('terms.s2_intro') }}</p>
           <ul class="space-y-3 text-gray-400">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Do'konlarning joriy chegirmalari va aksiyalari haqida ma'lumot berish</span>
+              <span>{{ t('terms.s2_item1') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Chegirmalarni kategoriyalar va do'konlar bo'yicha filtrlash</span>
+              <span>{{ t('terms.s2_item2') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Telegram va Instagram orqali chegirma xabarnomalarini yuborish</span>
+              <span>{{ t('terms.s2_item3') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 shrink-0"></span>
-              <span>Do'konlar reytingini shakllantirish</span>
+              <span>{{ t('terms.s2_item4') }}</span>
             </li>
           </ul>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">3. Javobgarlik cheklovi</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s3_title') }}</h2>
           <p class="text-gray-400 leading-relaxed mb-4">
-            Mirbazar.uz faqat axborot manbai sifatida xizmat qiladi. Biz quyidagilar uchun javobgar emasmiz:
+            {{ t('terms.s3_intro') }}
           </p>
           <ul class="space-y-3 text-gray-400">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 shrink-0"></span>
-              <span>Chegirma ma'lumotlarining aniqligi va dolzarbligi (ma'lumotlar do'konlardan olinadi)</span>
+              <span>{{ t('terms.s3_item1') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 shrink-0"></span>
-              <span>Do'konlarning narx siyosatidagi o'zgarishlar</span>
+              <span>{{ t('terms.s3_item2') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 shrink-0"></span>
-              <span>Uchinchi tomon saytlar va xizmatlardagi kontentlar</span>
+              <span>{{ t('terms.s3_item3') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 shrink-0"></span>
-              <span>Foydalanuvchilarning xarid qarorlari natijasida yuzaga kelgan zarar</span>
+              <span>{{ t('terms.s3_item4') }}</span>
             </li>
           </ul>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">4. Intellektual mulk</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s4_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Saytdagi barcha kontent — dizayn, logotip, matnlar va dasturiy ta'minot Mirbazar.uz jamoasiga tegishli.
-            Do'konlar nomlari va logotiplari tegishli egalariga tegishli. Sayt kontentini ruxsatsiz nusxalash,
-            tarqatish yoki qayta ishlatish taqiqlanadi.
+            {{ t('terms.s4_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">5. Foydalanish qoidalari</h2>
-          <p class="text-gray-400 leading-relaxed mb-4">Saytdan foydalanishda quyidagilar taqiqlanadi:</p>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s5_title') }}</h2>
+          <p class="text-gray-400 leading-relaxed mb-4">{{ t('terms.s5_intro') }}</p>
           <ul class="space-y-3 text-gray-400">
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 shrink-0"></span>
-              <span>Sayt ishiga zarar yetkazuvchi harakatlar (DDoS, hacking va h.k.)</span>
+              <span>{{ t('terms.s5_item1') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 shrink-0"></span>
-              <span>Avtomatlashtirilgan tizimlar orqali saytga ortiqcha yuk berish</span>
+              <span>{{ t('terms.s5_item2') }}</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 shrink-0"></span>
-              <span>Soxta ma'lumotlar tarqatish yoki boshqa foydalanuvchilarga zarar yetkazish</span>
+              <span>{{ t('terms.s5_item3') }}</span>
             </li>
           </ul>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">6. Uchinchi tomon havolalari</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s6_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Saytimiz do'konlarning rasmiy saytlariga, Telegram kanallariga va boshqa tashqi resurslarga
-            havolalar o'z ichiga oladi. Biz uchinchi tomon saytlarining kontenti yoki maxfiylik siyosati
-            uchun javobgar emasmiz. Ulardan foydalanishdan oldin tegishli shartlarni o'qib chiqishni tavsiya etamiz.
+            {{ t('terms.s6_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">7. O'zgarishlar kiritish</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s7_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Biz ushbu foydalanish shartlarini istalgan vaqtda o'zgartirish huquqini saqlab qolamiz.
-            O'zgarishlar saytda e'lon qilingan paytdan boshlab kuchga kiradi. Saytdan davom etib
-            foydalanishingiz yangilangan shartlarga rozilik bildirganingizni anglatadi.
+            {{ t('terms.s7_text') }}
           </p>
         </section>
 
         <section class="glass-card p-8">
-          <h2 class="text-xl font-semibold text-white mb-4">8. Bog'lanish</h2>
+          <h2 class="text-xl font-semibold text-white mb-4">{{ t('terms.s8_title') }}</h2>
           <p class="text-gray-400 leading-relaxed">
-            Foydalanish shartlari bo'yicha savollaringiz bo'lsa, biz bilan bog'laning:
+            {{ t('terms.s8_text') }}
           </p>
           <div class="mt-4 flex flex-wrap gap-3">
             <a

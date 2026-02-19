@@ -6,7 +6,26 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     '@vueuse/nuxt',
     'nuxt-icon',
+    '@nuxtjs/i18n',
   ],
+
+  i18n: {
+    locales: [
+      { code: 'en', language: 'en', file: 'en.json', name: 'English' },
+      { code: 'uz', language: 'uz', file: 'uz.json', name: "O'zbek" },
+      { code: 'ru', language: 'ru', file: 'ru.json', name: 'Русский' },
+    ],
+    defaultLocale: 'en',
+    strategy: 'prefix_except_default',
+    langDir: 'i18n/locales',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      fallbackLocale: 'en',
+    },
+    baseUrl: 'https://mirbazar.uz',
+  },
 
   css: ['~/assets/css/main.css'],
 
@@ -18,31 +37,29 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      htmlAttrs: { lang: 'uz' },
-      title: 'Mirbazar — Barcha chegirmalar bir joyda',
+      title: 'Mirbazar — All discounts in one place',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
           content:
-            "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+            'The best promotions and discounts in Uzbekistan. All promotions from Texnomart, Asaxiy, Mediapark and other stores.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://mirbazar.uz' },
-        { property: 'og:title', content: 'Mirbazar — Barcha chegirmalar bir joyda' },
+        { property: 'og:title', content: 'Mirbazar — All discounts in one place' },
         {
           property: 'og:description',
-          content: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+          content: 'The best promotions and discounts in Uzbekistan. All promotions from Texnomart, Asaxiy, Mediapark and other stores.',
         },
         { property: 'og:image', content: 'https://mirbazar.uz/og-image.png' },
-        { property: 'og:locale', content: 'uz_UZ' },
         { property: 'og:site_name', content: 'Mirbazar' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Mirbazar — Barcha chegirmalar bir joyda' },
+        { name: 'twitter:title', content: 'Mirbazar — All discounts in one place' },
         {
           name: 'twitter:description',
-          content: "O'zbekistondagi eng yaxshi aksiyalar va chegirmalar. Texnomart, Asaxiy, Mediapark va boshqa do'konlarning barcha aksiyalari.",
+          content: 'The best promotions and discounts in Uzbekistan. All promotions from Texnomart, Asaxiy, Mediapark and other stores.',
         },
         { name: 'twitter:image', content: 'https://mirbazar.uz/og-image.png' },
         { name: 'theme-color', content: '#0a0a0f' },
@@ -51,6 +68,7 @@ export default defineNuxtConfig({
       script: [
         { src: 'https://www.googletagmanager.com/gtag/js?id=G-EGNW50GSQZ', async: true },
         { children: "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EGNW50GSQZ');" },
+        { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9769460570717063', async: true, crossorigin: 'anonymous' },
       ],
     },
   },

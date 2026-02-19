@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 const props = defineProps<{
   modelValue: string
 }>()
@@ -36,7 +38,7 @@ function onInput(event: Event) {
     <input
       type="text"
       :value="modelValue"
-      placeholder="Mahsulot qidirish..."
+      :placeholder="t('search.placeholder')"
       class="w-full py-3 pl-11 pr-5 rounded-full bg-white/[0.03] border border-white/10 text-white text-sm placeholder-gray-500 outline-none transition-all duration-300 focus:border-purple-500/60 focus:shadow-[0_0_25px_rgba(124,58,237,0.2)] focus:bg-white/[0.05]"
       @input="onInput"
       @focus="focused = true"

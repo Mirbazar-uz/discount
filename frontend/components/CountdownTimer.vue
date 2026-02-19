@@ -1,12 +1,14 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 const props = defineProps<{
   daysLeft: number
 }>()
 
 const label = computed(() => {
-  if (props.daysLeft <= 0) return 'Tugagan'
-  if (props.daysLeft === 1) return '1 kun qoldi'
-  return `${props.daysLeft} kun qoldi`
+  if (props.daysLeft <= 0) return t('common.days_left_0')
+  if (props.daysLeft === 1) return t('common.days_left_1')
+  return t('common.days_left_n', { count: props.daysLeft })
 })
 
 const isUrgent = computed(() => props.daysLeft <= 2)
