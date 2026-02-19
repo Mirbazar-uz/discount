@@ -39,11 +39,11 @@ function selectCategory(slug: string) {
 </script>
 
 <template>
-  <div class="flex gap-2.5 flex-wrap">
+  <div class="flex gap-2 overflow-x-auto scrollbar-hide">
     <button
       v-for="cat in categories"
       :key="cat.slug"
-      class="flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all duration-300 border whitespace-nowrap"
+      class="flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2.5 rounded-full font-medium text-xs md:text-sm transition-all duration-300 border whitespace-nowrap shrink-0"
       :class="
         modelValue === cat.slug
           ? 'bg-gradient-to-r from-purple-500 to-cyan-500 border-transparent text-white shadow-[0_0_20px_rgba(124,58,237,0.3)]'

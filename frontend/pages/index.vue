@@ -15,6 +15,20 @@ const stats = ref({ total_promotions: 0, active_promotions: 0, total_stores: 0, 
 const loading = ref(true)
 const loadingRating = ref(true)
 const loadingStores = ref(true)
+const mobileSearchOpen = ref(false)
+const mobileSearchInput = ref<HTMLInputElement | null>(null)
+
+function openMobileSearch() {
+  mobileSearchOpen.value = true
+  nextTick(() => {
+    mobileSearchInput.value?.focus()
+  })
+}
+
+function closeMobileSearch() {
+  mobileSearchOpen.value = false
+  searchQuery.value = ''
+}
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -160,12 +174,59 @@ useHead({
     <!-- Filters -->
     <section
       id="promotions"
-      class="py-6 sticky top-[56px] z-40 border-b border-white/[0.06] transition-all duration-300"
+      class="py-3 md:py-6 sticky top-[56px] z-40 border-b border-white/[0.06] transition-all duration-300"
       style="background: rgba(10, 10, 15, 0.92); backdrop-filter: blur(20px) saturate(180%)"
     >
-      <div class="max-w-7xl mx-auto px-5 flex flex-col md:flex-row gap-4 items-start md:items-center">
-        <CategoryFilter v-model="selectedCategory" />
-        <SearchBar v-model="searchQuery" />
+      <div class="max-w-7xl mx-auto px-4 md:px-5">
+        <!-- Desktop: categories + search side by side -->
+        <div class="hidden md:flex gap-4 items-center">
+          <CategoryFilter v-model="selectedCategory" />
+          <SearchBar v-model="searchQuery" />
+        </div>
+
+        <!-- Mobile: compact single row -->
+        <div class="flex md:hidden items-center gap-2">
+          <!-- Search expanded state -->
+          <template v-if="mobileSearchOpen">
+            <div class="flex-1 relative">
+              <svg
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400"
+                width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+              </svg>
+              <input
+                ref="mobileSearchInput"
+                type="text"
+                :value="searchQuery"
+                :placeholder="t('search.placeholder')"
+                class="w-full py-2.5 pl-9 pr-4 rounded-xl bg-white/[0.05] border border-purple-500/40 text-white text-sm placeholder-gray-500 outline-none transition-all duration-300 focus:border-purple-500/60 focus:shadow-[0_0_20px_rgba(124,58,237,0.15)]"
+                @input="(e: Event) => searchQuery = (e.target as HTMLInputElement).value"
+              />
+            </div>
+            <button
+              class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-gray-400 hover:text-white transition-all"
+              @click="closeMobileSearch"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </template>
+
+          <!-- Default state: categories + search icon -->
+          <template v-else>
+            <CategoryFilter v-model="selectedCategory" class="flex-1 min-w-0" />
+            <button
+              class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-gray-400 hover:text-purple-400 hover:border-purple-500/40 transition-all duration-200"
+              @click="openMobileSearch"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+              </svg>
+            </button>
+          </template>
+        </div>
       </div>
     </section>
 

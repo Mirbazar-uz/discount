@@ -315,6 +315,15 @@ a {
   animation: glow-pulse 3s ease-in-out infinite;
 }
 
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Utility */
 .line-clamp-2 {
   display: -webkit-box;
