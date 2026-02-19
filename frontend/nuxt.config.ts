@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'en',
     strategy: 'prefix_except_default',
-    langDir: 'i18n/locales',
+    langDir: 'locales',
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
@@ -25,6 +25,9 @@ export default defineNuxtConfig({
       fallbackLocale: 'en',
     },
     baseUrl: 'https://mirbazar.uz',
+    bundle: {
+      optimizeTranslationDirective: false,
+    },
   },
 
   css: ['~/assets/css/main.css'],
