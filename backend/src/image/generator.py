@@ -67,6 +67,7 @@ class ImageGenerator:
             "big":   self._font("Inter-Bold.ttf", 90),
             "title": self._font("Inter-Bold.ttf", 72),
             "price": self._font("Inter-Bold.ttf", 70),
+            "dtitle": self._font("Inter-Bold.ttf", 56),
             "old":   self._font("Inter-Bold.ttf", 40),
             "sub":   self._font("Inter-Bold.ttf", 44),
             "body":  self._font("Inter-Bold.ttf", 36),
@@ -430,12 +431,21 @@ class ImageGenerator:
         self._accent(d, 0, W)
         self._corners(d, W, H)
 
+        parts = title.split(" ", 1)
+        top_text = parts[0] if parts else title
+        bottom_text = parts[1] if len(parts) > 1 else ""
+
         d.text(
-            (W // 2, 75), title,
-            font=self.f["hero"], fill=_rgb(self.WH), anchor="mm",
+            (W // 2, 45), top_text,
+            font=self.f["big"], fill=_rgb(self.GOLD), anchor="mm",
         )
+        if bottom_text:
+            d.text(
+                (W // 2, 108), bottom_text,
+                font=self.f["dtitle"], fill=_rgb(self.WH), anchor="mm",
+            )
         d.text(
-            (W // 2, 140), datetime.now().strftime("%d.%m.%Y"),
+            (W // 2, 162), datetime.now().strftime("%d.%m.%Y"),
             font=self.f["label"], fill=_rgb(self.MT), anchor="mm",
         )
 
