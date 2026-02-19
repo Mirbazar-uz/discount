@@ -221,7 +221,7 @@
   "telegram": {
     "cta_title": "Хотите первыми узнавать о скидках?",
     "cta_subtitle": "Подпишитесь на наш Telegram-канал и не пропускайте лучшие акции!",
-    "cta_button": "Подписаться на @mirbazar_uz",
+    "cta_button": "Подписаться на {'@'}mirbazar_uz",
     "daily_promotions": "Ежедневные новые акции",
     "best_prices": "Лучшие цены",
     "weekly_rating": "Еженедельный рейтинг"

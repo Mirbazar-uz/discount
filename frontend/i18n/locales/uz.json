@@ -221,7 +221,7 @@
   "telegram": {
     "cta_title": "Chegirmalarni birinchi bo'lib bilmoqchimisiz?",
     "cta_subtitle": "Telegram kanalimizga obuna bo'ling va eng yaxshi aksiyalarni o'tkazib yubormang!",
-    "cta_button": "@mirbazar_uz ga obuna bo'ling",
+    "cta_button": "{'@'}mirbazar_uz ga obuna bo'ling",
     "daily_promotions": "Kunlik yangi aksiyalar",
     "best_prices": "Eng arzon narxlar",
     "weekly_rating": "Haftalik reyting"
