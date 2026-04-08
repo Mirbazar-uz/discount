@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     ports:
-      - "127.0.0.1:8200:8000"
+      - "127.0.0.1:8210:8000"
     volumes:
       - ./backend/assets:/app/assets
       - ./generated_images:/app/generated_images
@@ -27,7 +27,7 @@ services:
     container_name: mirbazar_frontend
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3200:3000"
+      - "127.0.0.1:3210:3000"
     environment:
       - NUXT_PUBLIC_API_BASE=/api
       - NUXT_API_BASE_SERVER=http://backend:8000

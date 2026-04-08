@@ -37,8 +37,8 @@ jobs:
             sleep 30
 
             echo "Health check..."
-            curl -f http://127.0.0.1:8200/health || exit 1
-            curl -f http://127.0.0.1:3200 || exit 1
+            curl -f http://127.0.0.1:8210/health || exit 1
+            curl -f http://127.0.0.1:3210 || exit 1
 
             echo "Cleanup old images..."
             docker image prune -f
