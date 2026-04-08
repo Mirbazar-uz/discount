@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Query, Depends
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
-UZB_TZ = ZoneInfo("Asia/Tashkent")
 
 from ..database.connection import get_db
 from ..database.models import Promotion, Store, PromotionStatus
@@ -20,6 +19,33 @@ from .schemas import (
     StatsResponse,
     HealthResponse,
 )
+
+UZB_TZ = ZoneInfo("Asia/Tashkent")
+
+
+def _resolve_images(p) -> Tuple[Optional[str], List[str]]:
+    """Resolve display URLs for a promotion.
+
+    The scraper stores Telegram CDN URLs (cdn*.telesco.pe) which expire over
+    time, so we always prefer the locally generated branded image when one
+    exists. Remote URLs are kept as additional gallery entries.
+    """
+    local_url: Optional[str] = None
+    if p.generated_image_path:
+        local_url = f"/images/{Path(p.generated_image_path).name}"
+
+    main_url = local_url or p.image_url
+
+    gallery: List[str] = []
+    if local_url:
+        gallery.append(local_url)
+    if p.images:
+        for img in p.images:
+            if img.image_url and img.image_url != local_url:
+                gallery.append(img.image_url)
+
+    return main_url, gallery
+
 
 router = APIRouter()
 
@@ -58,6 +84,8 @@ async def get_promotions(
             deadline = p.deadline.replace(tzinfo=UZB_TZ) if p.deadline.tzinfo is None else p.deadline
             days_left = max(0, (deadline - now).days)
 
+        main_url, gallery = _resolve_images(p)
+
         items.append(
             PromotionResponse(
                 id=p.id,
@@ -70,8 +98,8 @@ async def get_promotions(
                 category=p.category,
                 deadline_text=p.deadline_text,
                 source_url=p.source_url,
-                image_url=p.image_url,
-                image_urls=[img.image_url for img in p.images] if p.images else [],
+                image_url=main_url,
+                image_urls=gallery,
                 status=p.status.value if p.status else "active",
                 store=p.store.name if p.store else "",
                 store_slug=p.store.slug if p.store else "",
@@ -103,6 +131,8 @@ async def get_promotion(promo_id: int, db: Session = Depends(get_db)):
         deadline = p.deadline.replace(tzinfo=UZB_TZ) if p.deadline.tzinfo is None else p.deadline
         days_left = max(0, (deadline - now).days)
 
+    main_url, gallery = _resolve_images(p)
+
     return PromotionResponse(
         id=p.id,
         title=p.title,
@@ -114,8 +144,8 @@ async def get_promotion(promo_id: int, db: Session = Depends(get_db)):
         category=p.category,
         deadline_text=p.deadline_text,
         source_url=p.source_url,
-        image_url=p.image_url,
-        image_urls=[img.image_url for img in p.images] if p.images else [],
+        image_url=main_url,
+        image_urls=gallery,
         status=p.status.value if p.status else "active",
         store=p.store.name if p.store else "",
         store_slug=p.store.slug if p.store else "",
